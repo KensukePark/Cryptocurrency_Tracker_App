@@ -1,4 +1,4 @@
-# gps_demo
+# coin_wallet_demo
 
 A new Flutter project.
 
