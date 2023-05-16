@@ -30,7 +30,7 @@ class _PriceScreenState extends State<PriceScreen> with TickerProviderStateMixin
   void initState() {
     super.initState();
     updateData(widget.parseData);
-    _timer = Timer.periodic(Duration(seconds: 60), (timer) {
+    _timer = Timer.periodic(Duration(seconds: 600), (timer) {
       Navigator.of(context).pushReplacement(
         MaterialPageRoute(
           builder: (BuildContext context) => Loading(),
@@ -113,7 +113,7 @@ class _PriceScreenState extends State<PriceScreen> with TickerProviderStateMixin
                       child: Stack(
                             children: [
                               Container(
-                                  padding: EdgeInsets.all(20),
+                                  padding: EdgeInsets.all(10),
                                   child:
                                   Column(
                                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -134,10 +134,10 @@ class _PriceScreenState extends State<PriceScreen> with TickerProviderStateMixin
                                                 crossAxisAlignment: CrossAxisAlignment.start,
                                                 children: [
                                                   Text(
-                                                    'Currency',
+                                                    'Symbol            ',
                                                     style: GoogleFonts.lato(
                                                         fontSize: 15.0,
-                                                        color: Colors.white
+                                                        color: Colors.grey
                                                     ),
                                                   ),
 
@@ -150,26 +150,23 @@ class _PriceScreenState extends State<PriceScreen> with TickerProviderStateMixin
                                                     '    Market Cap',
                                                     style: GoogleFonts.lato(
                                                         fontSize: 15.0,
-                                                        color: Colors.white
+                                                        color: Colors.grey
                                                     ),
                                                   ),
-
                                                 ],
                                               ),
                                               Column(
                                                 crossAxisAlignment: CrossAxisAlignment.start,
                                                 children: [
                                                   Text(
-                                                    'Price',
+                                                    'Price/24h',
                                                     style: GoogleFonts.lato(
                                                         fontSize: 15.0,
-                                                        color: Colors.white
+                                                        color: Colors.grey
                                                     ),
                                                   ),
-
                                                 ],
                                               ),
-
                                             ],
                                           ),
                                           Divider(
@@ -177,7 +174,6 @@ class _PriceScreenState extends State<PriceScreen> with TickerProviderStateMixin
                                             thickness: 2.0,
                                             color: Colors.white30,
                                           ),
-
                                           Column(
                                             crossAxisAlignment: CrossAxisAlignment.start,
                                             children: [
@@ -1038,28 +1034,145 @@ class _PriceScreenState extends State<PriceScreen> with TickerProviderStateMixin
                     )
                 ),
                 Container(
-                  color: Color(0xff322f38),
-                  alignment: Alignment.bottomCenter,
-                  child: ListView.builder(
-                    itemCount: len,
-                    itemBuilder: (BuildContext cntext,int index) {
-                      return Container(
-                        padding: EdgeInsets.all(15),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: <Widget> [
-                            Text('Entry ${coin_name[index]}',
-                              style: GoogleFonts.lato(
-                                fontSize: 16.0,
-                                fontWeight: FontWeight.bold,
-                                color: Colors.white,
-                                )
+                    color: Color(0xff322f38),
+                    child: Stack(
+                      children: [
+                        Container(
+                          padding: EdgeInsets.all(10),
+                          child:
+                            Column(
+                              children: [
+                                SizedBox(
+                                  height: 1.0,
+                                ),
+                                Row(
+                                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                  children: [
+                                    SizedBox(
+                                        width: 150,
+                                        child: Text('Total Portfolio Value',
+                                          style: GoogleFonts.lato(
+                                              fontSize: 12.0,
+                                              fontWeight: FontWeight.bold,
+                                              color: Colors.grey
+                                          ),)
+                                    ),
+                                    SizedBox(
+                                        width: 80,
+                                        child: Text('Profit & Loss',
+                                          textAlign: TextAlign.center,
+                                          style: GoogleFonts.lato(
+                                              fontSize: 12.0,
+                                              fontWeight: FontWeight.bold,
+                                              color: Colors.grey
+                                          ),)
+                                    ),
+                                    SizedBox(
+                                        width: 80,
+                                        child: Text('Rate of return',
+                                          textAlign: TextAlign.end,
+                                          style: GoogleFonts.lato(
+                                              fontSize: 12.0,
+                                              fontWeight: FontWeight.bold,
+                                              color: Colors.grey
+                                          ),)
+                                    ),
+                                  ],
+                                ),
+                                Row(
+                                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                  children: [
+                                    SizedBox(
+                                        width: 150,
+                                        child: Text('0 ₩',
+                                          style: GoogleFonts.lato(
+                                              fontSize: 28.0,
+                                              fontWeight: FontWeight.bold,
+                                              color: Colors.white
+                                          ),)
+                                    ),
+                                    SizedBox(
+                                        width: 80,
+                                        child: Text('0 ₩',
+                                          textAlign: TextAlign.center,
+                                          style: GoogleFonts.lato(
+                                              fontSize: 18.0,
+                                              fontWeight: FontWeight.bold,
+                                              color: Colors.white
+                                          ),)
+                                    ),
+                                    SizedBox(
+                                        width: 80,
+                                        child: Text('0%',
+                                          textAlign: TextAlign.end,
+                                          style: GoogleFonts.lato(
+                                              fontSize: 18.0,
+                                              fontWeight: FontWeight.bold,
+                                              color: Colors.white
+                                          ),)
+                                    ),
+                                  ],
+                                ),
+                                SizedBox(
+                                  height: 15.0,
+                                ),
+                                Row(
+                                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                  children: [
+                                    Column(
+                                      crossAxisAlignment: CrossAxisAlignment.start,
+                                      children: [
+                                        Text(
+                                          'Symbol',
+                                          style: GoogleFonts.lato(
+                                              fontSize: 15.0,
+                                              color: Colors.grey
+                                          ),
+                                        ),
+
+                                      ],
+                                    ),
+                                    Column(
+                                      crossAxisAlignment: CrossAxisAlignment.start,
+                                      children: [
+                                        Text(
+                                          'Holdings',
+                                          style: GoogleFonts.lato(
+                                              fontSize: 15.0,
+                                              color: Colors.grey
+                                          ),
+                                        ),
+
+                                      ],
+                                    ),
+                                    Column(
+                                      crossAxisAlignment: CrossAxisAlignment.start,
+                                      children: [
+                                        Text(
+                                          'Price/24h',
+                                          style: GoogleFonts.lato(
+                                              fontSize: 15.0,
+                                              color: Colors.grey
+                                          ),
+                                        ),
+
+                                      ],
+                                    ),
+                                  ],
+                                ),
+                                Divider(
+                                  height: 25.0,
+                                  thickness: 1.0,
+                                  color: Colors.white30,
+                                ),
+
+
+                              ],
                             )
-                          ]
                         ),
-                      );
-                    }
-                  )
+
+                      ],
+                    ),
                 ),
               ],
             ),
@@ -1069,4 +1182,3 @@ class _PriceScreenState extends State<PriceScreen> with TickerProviderStateMixin
     );
   }
 }
-
