@@ -47,7 +47,7 @@ class _PriceScreenState extends State<PriceScreen> with TickerProviderStateMixin
   void updateData(dynamic Data){
     NumberFormat format = NumberFormat('#,###');
     NumberFormat format2 = NumberFormat('#,###.##');
-    for (int i = 0; i<15; i++) {
+    for (int i = 0; i<100; i++) {
       //coin_name.add(' ' + Data[i]['id']);
       coin_name.add(' '+Data[i]['symbol'].toUpperCase());
       coin_sym.add(Data[i]['symbol']);
@@ -108,7 +108,7 @@ class _PriceScreenState extends State<PriceScreen> with TickerProviderStateMixin
               children: [
                 Container(
                   color: Color(0xff322f38),
-                  alignment: Alignment.center,
+                  //alignment: Alignment.center,
                     child: SingleChildScrollView(
                       child: Stack(
                             children: [
@@ -174,855 +174,70 @@ class _PriceScreenState extends State<PriceScreen> with TickerProviderStateMixin
                                             thickness: 2.0,
                                             color: Colors.white30,
                                           ),
-                                          Column(
-                                            crossAxisAlignment: CrossAxisAlignment.start,
-                                            children: [
-                                              Row(
-                                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                                crossAxisAlignment: CrossAxisAlignment.center,
-                                                children: [
-                                                  Row(
-                                                    crossAxisAlignment: CrossAxisAlignment.center,
-                                                    children: [
-                                                      Image.network('${coin_img_url[0]}', width: 24, height: 24),
-                                                      SizedBox(
-                                                        width: 65,
-                                                        child: Text('${coin_name[0]}', style: GoogleFonts.lato(
-                                                          fontSize: 12.0,
-                                                          fontWeight: FontWeight.bold,
-                                                          color: Colors.white,
+                                          ListView.separated(
+                                            physics: const NeverScrollableScrollPhysics(),
+                                            shrinkWrap: true,
+                                            itemCount: coin_name.length,
+                                            itemBuilder: (BuildContext context, int index) {
+                                              return Container(
+                                                child: Row(
+                                                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                                  crossAxisAlignment: CrossAxisAlignment.center,
+                                                  children: [
+                                                    Row(
+                                                      crossAxisAlignment: CrossAxisAlignment.center,
+                                                      children: [
+                                                        Image.network('${coin_img_url[index]}', width: 24, height: 24),
+                                                        SizedBox(
+                                                          width: 65,
+                                                          child: Text('${coin_name[index]}', style: GoogleFonts.lato(
+                                                            fontSize: 12.0,
+                                                            fontWeight: FontWeight.bold,
+                                                            color: Colors.white,
+                                                          ),
                                                           ),
                                                         ),
-                                                      ),
-                                                    ],
-                                                  ),
-                                                  SizedBox(
-                                                    width: 150,
-                                                    child: Text('${coin_cap[0]}',
-                                                      textAlign: TextAlign.end,
-                                                      style: GoogleFonts.lato(
-                                                        fontSize: 12.0,
-                                                        fontWeight: FontWeight.bold,
-                                                        color: Colors.white),
-                                                    ),
-                                                  ),
-                                                  SizedBox(
-                                                    width: 120,
-                                                    child: Column(
-                                                      crossAxisAlignment: CrossAxisAlignment.end,
-                                                      children: [
-                                                        Text(
-                                                          coin_price[0],
-                                                          style: GoogleFonts.lato(
-                                                              fontSize: 12.0,
-                                                              fontWeight: FontWeight.bold,
-                                                              color: Colors.white),
-                                                        ),
-                                                        Text(
-                                                          coin_percent[0],
-                                                          style: GoogleFonts.lato(
-                                                              fontSize: 12.0,
-                                                              fontWeight: FontWeight.bold,
-                                                              color: Color(coin_sign[0])),
-                                                        ),
                                                       ],
+                                                    ),
+                                                    SizedBox(
+                                                      width: 150,
+                                                      child: Text('${coin_cap[index]}',
+                                                        textAlign: TextAlign.end,
+                                                        style: GoogleFonts.lato(
+                                                            fontSize: 12.0,
+                                                            fontWeight: FontWeight.bold,
+                                                            color: Colors.white),
+                                                      ),
+                                                    ),
+                                                    SizedBox(
+                                                      width: 120,
+                                                      child: Column(
+                                                        crossAxisAlignment: CrossAxisAlignment.end,
+                                                        children: [
+                                                          Text(
+                                                            coin_price[index],
+                                                            style: GoogleFonts.lato(
+                                                                fontSize: 12.0,
+                                                                fontWeight: FontWeight.bold,
+                                                                color: Colors.white),
+                                                          ),
+                                                          Text(
+                                                            coin_percent[index],
+                                                            style: GoogleFonts.lato(
+                                                                fontSize: 12.0,
+                                                                fontWeight: FontWeight.bold,
+                                                                color: Color(coin_sign[index])),
+                                                          ),
+                                                        ],
+                                                      ),
+
                                                     ),
 
-                                                  ),
-
-                                                ],
-                                              ),
-                                              SizedBox(
-                                                height: 15.0,
-                                              ),
-                                              //-------------------------------------------------
-                                              Row(
-                                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                                crossAxisAlignment: CrossAxisAlignment.center,
-                                                children: [
-                                                  Row(
-                                                    crossAxisAlignment: CrossAxisAlignment.center,
-                                                    children: [
-                                                      Image.network('${coin_img_url[1]}', width: 24, height: 24),
-                                                      SizedBox(
-                                                        width: 65,
-                                                        child: Text('${coin_name[1]}',
-                                                        style: GoogleFonts.lato(
-                                                            fontSize: 12.0,
-                                                            fontWeight: FontWeight.bold,
-                                                            color: Colors.white
-                                                        ),)
-                                                      ),
-                                                    ],
-                                                  ),
-                                                  SizedBox(
-                                                    width: 150,
-                                                    child: Text('${coin_cap[1]}',
-                                                      textAlign: TextAlign.end,
-                                                    style: GoogleFonts.lato(
-                                                        fontSize: 12.0,
-                                                        fontWeight: FontWeight.bold,
-                                                        color: Colors.white),
-                                                    )
-                                                  ),
-                                                  SizedBox(
-                                                    width: 120,
-                                                    child: Column(
-                                                      crossAxisAlignment: CrossAxisAlignment.end,
-                                                      children: [
-                                                        Text(
-                                                          coin_price[1],
-                                                          style: GoogleFonts.lato(
-                                                              fontSize: 12.0,
-                                                              fontWeight: FontWeight.bold,
-                                                              color: Colors.white),
-                                                        ),
-                                                        Text(
-                                                          coin_percent[1],
-                                                          style: GoogleFonts.lato(
-                                                              fontSize: 12.0,
-                                                              fontWeight: FontWeight.bold,
-                                                              color: Color(coin_sign[1])),
-                                                        ),
-                                                      ],
-                                                    ),
-                                                  ),
-                                                ],
-                                              ),
-                                              SizedBox(
-                                                height: 15.0,
-                                              ),
-                                              //-------------------------------------------------
-                                              Row(
-                                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                                crossAxisAlignment: CrossAxisAlignment.center,
-                                                children: [
-                                                  Row(
-                                                    crossAxisAlignment: CrossAxisAlignment.center,
-                                                    children: [
-                                                      Image.network('${coin_img_url[2]}', width: 24, height: 24),
-                                                      SizedBox(
-                                                          width: 65,
-                                                          child: Text('${coin_name[2]}',
-                                                            style: GoogleFonts.lato(
-                                                                fontSize: 12.0,
-                                                                fontWeight: FontWeight.bold,
-                                                                color: Colors.white
-                                                            ),)
-                                                      ),
-                                                    ],
-                                                  ),
-                                                  SizedBox(
-                                                      width: 150,
-                                                      child: Text('${coin_cap[2]}',
-                                                        textAlign: TextAlign.end,
-                                                        style: GoogleFonts.lato(
-                                                            fontSize: 12.0,
-                                                            fontWeight: FontWeight.bold,
-                                                            color: Colors.white),
-                                                      )
-                                                  ),
-                                                  SizedBox(
-                                                    width: 120,
-                                                    child: Column(
-                                                      crossAxisAlignment: CrossAxisAlignment.end,
-                                                      children: [
-                                                        Text(
-                                                          coin_price[2],
-                                                          style: GoogleFonts.lato(
-                                                              fontSize: 12.0,
-                                                              fontWeight: FontWeight.bold,
-                                                              color: Colors.white),
-                                                        ),
-                                                        Text(
-                                                          coin_percent[2],
-                                                          style: GoogleFonts.lato(
-                                                              fontSize: 12.0,
-                                                              fontWeight: FontWeight.bold,
-                                                              color: Color(coin_sign[2])),
-                                                        ),
-                                                      ],
-                                                    ),
-                                                  ),
-                                                ],
-                                              ),
-                                              SizedBox(
-                                                height: 15.0,
-                                              ),
-                                              Row(
-                                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                                crossAxisAlignment: CrossAxisAlignment.center,
-                                                children: [
-                                                  Row(
-                                                    crossAxisAlignment: CrossAxisAlignment.center,
-                                                    children: [
-                                                      Image.network('${coin_img_url[3]}', width: 24, height: 24),
-                                                      SizedBox(
-                                                          width: 65,
-                                                          child: Text('${coin_name[3]}',
-                                                            style: GoogleFonts.lato(
-                                                                fontSize: 12.0,
-                                                                fontWeight: FontWeight.bold,
-                                                                color: Colors.white
-                                                            ),)
-                                                      ),
-                                                    ],
-                                                  ),
-                                                  SizedBox(
-                                                      width: 150,
-                                                      child: Text('${coin_cap[3]}',
-                                                        textAlign: TextAlign.end,
-                                                        style: GoogleFonts.lato(
-                                                            fontSize: 12.0,
-                                                            fontWeight: FontWeight.bold,
-                                                            color: Colors.white),
-                                                      )
-                                                  ),
-                                                  SizedBox(
-                                                    width: 120,
-                                                    child: Column(
-                                                      crossAxisAlignment: CrossAxisAlignment.end,
-                                                      children: [
-                                                        Text(
-                                                          coin_price[3],
-                                                          style: GoogleFonts.lato(
-                                                              fontSize: 12.0,
-                                                              fontWeight: FontWeight.bold,
-                                                              color: Colors.white),
-                                                        ),
-                                                        Text(
-                                                          coin_percent[3],
-                                                          style: GoogleFonts.lato(
-                                                              fontSize: 12.0,
-                                                              fontWeight: FontWeight.bold,
-                                                              color: Color(coin_sign[3])),
-                                                        ),
-                                                      ],
-                                                    ),
-                                                  ),
-                                                ],
-                                              ),
-                                              SizedBox(
-                                                height: 15.0,
-                                              ),
-                                              Row(
-                                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                                crossAxisAlignment: CrossAxisAlignment.center,
-                                                children: [
-                                                  Row(
-                                                    crossAxisAlignment: CrossAxisAlignment.center,
-                                                    children: [
-                                                      Image.network('${coin_img_url[4]}', width: 24, height: 24),
-                                                      SizedBox(
-                                                          width: 65,
-                                                          child: Text('${coin_name[4]}',
-                                                            style: GoogleFonts.lato(
-                                                                fontSize: 12.0,
-                                                                fontWeight: FontWeight.bold,
-                                                                color: Colors.white
-                                                            ),)
-                                                      ),
-                                                    ],
-                                                  ),
-                                                  SizedBox(
-                                                      width: 150,
-                                                      child: Text('${coin_cap[4]}',
-                                                        textAlign: TextAlign.end,
-                                                        style: GoogleFonts.lato(
-                                                            fontSize: 12.0,
-                                                            fontWeight: FontWeight.bold,
-                                                            color: Colors.white),
-                                                      )
-                                                  ),
-                                                  SizedBox(
-                                                    width: 120,
-                                                    child: Column(
-                                                      crossAxisAlignment: CrossAxisAlignment.end,
-                                                      children: [
-                                                        Text(
-                                                          coin_price[4],
-                                                          style: GoogleFonts.lato(
-                                                              fontSize: 12.0,
-                                                              fontWeight: FontWeight.bold,
-                                                              color: Colors.white),
-                                                        ),
-                                                        Text(
-                                                          coin_percent[4],
-                                                          style: GoogleFonts.lato(
-                                                              fontSize: 12.0,
-                                                              fontWeight: FontWeight.bold,
-                                                              color: Color(coin_sign[4])),
-                                                        ),
-                                                      ],
-                                                    ),
-                                                  ),
-                                                ],
-                                              ),
-                                              SizedBox(
-                                                height: 15.0,
-                                              ),
-                                              Row(
-                                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                                crossAxisAlignment: CrossAxisAlignment.center,
-                                                children: [
-                                                  Row(
-                                                    crossAxisAlignment: CrossAxisAlignment.center,
-                                                    children: [
-                                                      //Image.network('${coin_img_url[5]}', width: 24, height: 24),
-                                                      Image.asset('image/${coin_sym[5]}.png', width: 24, height: 24),
-                                                      SizedBox(
-                                                          width: 65,
-                                                          child: Text('${coin_name[5]}',
-                                                            style: GoogleFonts.lato(
-                                                                fontSize: 12.0,
-                                                                fontWeight: FontWeight.bold,
-                                                                color: Colors.white
-                                                            ),)
-                                                      ),
-                                                    ],
-                                                  ),
-                                                  SizedBox(
-                                                      width: 150,
-                                                      child: Text('${coin_cap[5]}',
-                                                        textAlign: TextAlign.end,
-                                                        style: GoogleFonts.lato(
-                                                            fontSize: 12.0,
-                                                            fontWeight: FontWeight.bold,
-                                                            color: Colors.white),
-                                                      )
-                                                  ),
-                                                  SizedBox(
-                                                    width: 120,
-                                                    child: Column(
-                                                      crossAxisAlignment: CrossAxisAlignment.end,
-                                                      children: [
-                                                        Text(
-                                                          coin_price[5],
-                                                          style: GoogleFonts.lato(
-                                                              fontSize: 12.0,
-                                                              fontWeight: FontWeight.bold,
-                                                              color: Colors.white),
-                                                        ),
-                                                        Text(
-                                                          coin_percent[5],
-                                                          style: GoogleFonts.lato(
-                                                              fontSize: 12.0,
-                                                              fontWeight: FontWeight.bold,
-                                                              color: Color(coin_sign[5])),
-                                                        ),
-                                                      ],
-                                                    ),
-                                                  ),
-                                                ],
-                                              ),
-                                              SizedBox(
-                                                height: 15.0,
-                                              ),
-                                              Row(
-                                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                                crossAxisAlignment: CrossAxisAlignment.center,
-                                                children: [
-                                                  Row(
-                                                    crossAxisAlignment: CrossAxisAlignment.center,
-                                                    children: [
-                                                      Image.network('${coin_img_url[6]}', width: 24, height: 24),
-                                                      SizedBox(
-                                                          width: 65,
-                                                          child: Text('${coin_name[6]}',
-                                                            style: GoogleFonts.lato(
-                                                                fontSize: 12.0,
-                                                                fontWeight: FontWeight.bold,
-                                                                color: Colors.white
-                                                            ),)
-                                                      ),
-                                                    ],
-                                                  ),
-                                                  SizedBox(
-                                                      width: 150,
-                                                      child: Text('${coin_cap[6]}',
-                                                        textAlign: TextAlign.end,
-                                                        style: GoogleFonts.lato(
-                                                            fontSize: 12.0,
-                                                            fontWeight: FontWeight.bold,
-                                                            color: Colors.white),
-                                                      )
-                                                  ),
-                                                  SizedBox(
-                                                    width: 120,
-                                                    child: Column(
-                                                      crossAxisAlignment: CrossAxisAlignment.end,
-                                                      children: [
-                                                        Text(
-                                                          coin_price[6],
-                                                          style: GoogleFonts.lato(
-                                                              fontSize: 12.0,
-                                                              fontWeight: FontWeight.bold,
-                                                              color: Colors.white),
-                                                        ),
-                                                        Text(
-                                                          coin_percent[6],
-                                                          style: GoogleFonts.lato(
-                                                              fontSize: 12.0,
-                                                              fontWeight: FontWeight.bold,
-                                                              color: Color(coin_sign[6])),
-                                                        ),
-                                                      ],
-                                                    ),
-                                                  ),
-                                                ],
-                                              ),
-                                              SizedBox(
-                                                height: 15.0,
-                                              ),
-                                              Row(
-                                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                                crossAxisAlignment: CrossAxisAlignment.center,
-                                                children: [
-                                                  Row(
-                                                    crossAxisAlignment: CrossAxisAlignment.center,
-                                                    children: [
-                                                      Image.network('${coin_img_url[7]}', width: 24, height: 24),
-                                                      SizedBox(
-                                                          width: 65,
-                                                          child: Text('${coin_name[7]}',
-                                                            style: GoogleFonts.lato(
-                                                                fontSize: 12.0,
-                                                                fontWeight: FontWeight.bold,
-                                                                color: Colors.white
-                                                            ),)
-                                                      ),
-                                                    ],
-                                                  ),
-                                                  SizedBox(
-                                                      width: 150,
-                                                      child: Text('${coin_cap[7]}',
-                                                        textAlign: TextAlign.end,
-                                                        style: GoogleFonts.lato(
-                                                            fontSize: 12.0,
-                                                            fontWeight: FontWeight.bold,
-                                                            color: Colors.white),
-                                                      )
-                                                  ),
-                                                  SizedBox(
-                                                    width: 120,
-                                                    child: Column(
-                                                      crossAxisAlignment: CrossAxisAlignment.end,
-                                                      children: [
-                                                        Text(
-                                                          coin_price[7],
-                                                          style: GoogleFonts.lato(
-                                                              fontSize: 12.0,
-                                                              fontWeight: FontWeight.bold,
-                                                              color: Colors.white),
-                                                        ),
-                                                        Text(
-                                                          coin_percent[7],
-                                                          style: GoogleFonts.lato(
-                                                              fontSize: 12.0,
-                                                              fontWeight: FontWeight.bold,
-                                                              color: Color(coin_sign[7])),
-                                                        ),
-                                                      ],
-                                                    ),
-                                                  ),
-                                                ],
-                                              ),
-                                              SizedBox(
-                                                height: 15.0,
-                                              ),
-                                              Row(
-                                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                                crossAxisAlignment: CrossAxisAlignment.center,
-                                                children: [
-                                                  Row(
-                                                    crossAxisAlignment: CrossAxisAlignment.center,
-                                                    children: [
-                                                      Image.network('${coin_img_url[8]}', width: 24, height: 24),
-                                                      SizedBox(
-                                                          width: 65,
-                                                          child: Text('${coin_name[8]}',
-                                                            style: GoogleFonts.lato(
-                                                                fontSize: 12.0,
-                                                                fontWeight: FontWeight.bold,
-                                                                color: Colors.white
-                                                            ),)
-                                                      ),
-                                                    ],
-                                                  ),
-                                                  SizedBox(
-                                                      width: 150,
-                                                      child: Text('${coin_cap[8]}',
-                                                        textAlign: TextAlign.end,
-                                                        style: GoogleFonts.lato(
-                                                            fontSize: 12.0,
-                                                            fontWeight: FontWeight.bold,
-                                                            color: Colors.white),
-                                                      )
-                                                  ),
-                                                  SizedBox(
-                                                    width: 120,
-                                                    child: Column(
-                                                      crossAxisAlignment: CrossAxisAlignment.end,
-                                                      children: [
-                                                        Text(
-                                                          coin_price[8],
-                                                          style: GoogleFonts.lato(
-                                                              fontSize: 12.0,
-                                                              fontWeight: FontWeight.bold,
-                                                              color: Colors.white),
-                                                        ),
-                                                        Text(
-                                                          coin_percent[8],
-                                                          style: GoogleFonts.lato(
-                                                              fontSize: 12.0,
-                                                              fontWeight: FontWeight.bold,
-                                                              color: Color(coin_sign[8])),
-                                                        ),
-                                                      ],
-                                                    ),
-                                                  ),
-                                                ],
-                                              ),
-                                              SizedBox(
-                                                height: 15.0,
-                                              ),
-                                              Row(
-                                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                                crossAxisAlignment: CrossAxisAlignment.center,
-                                                children: [
-                                                  Row(
-                                                    crossAxisAlignment: CrossAxisAlignment.center,
-                                                    children: [
-                                                      Image.network('${coin_img_url[9]}', width: 24, height: 24),
-                                                      SizedBox(
-                                                          width: 65,
-                                                          child: Text('${coin_name[9]}',
-                                                            style: GoogleFonts.lato(
-                                                                fontSize: 12.0,
-                                                                fontWeight: FontWeight.bold,
-                                                                color: Colors.white
-                                                            ),)
-                                                      ),
-                                                    ],
-                                                  ),
-                                                  SizedBox(
-                                                      width: 150,
-                                                      child: Text('${coin_cap[9]}',
-                                                        textAlign: TextAlign.end,
-                                                        style: GoogleFonts.lato(
-                                                            fontSize: 12.0,
-                                                            fontWeight: FontWeight.bold,
-                                                            color: Colors.white),
-                                                      )
-                                                  ),
-                                                  SizedBox(
-                                                    width: 120,
-                                                    child: Column(
-                                                      crossAxisAlignment: CrossAxisAlignment.end,
-                                                      children: [
-                                                        Text(
-                                                          coin_price[9],
-                                                          style: GoogleFonts.lato(
-                                                              fontSize: 12.0,
-                                                              fontWeight: FontWeight.bold,
-                                                              color: Colors.white),
-                                                        ),
-                                                        Text(
-                                                          coin_percent[9],
-                                                          style: GoogleFonts.lato(
-                                                              fontSize: 12.0,
-                                                              fontWeight: FontWeight.bold,
-                                                              color: Color(coin_sign[9])),
-                                                        ),
-                                                      ],
-                                                    ),
-                                                  ),
-                                                ],
-                                              ),
-                                              SizedBox(
-                                                height: 15.0,
-                                              ),
-                                              Row(
-                                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                                crossAxisAlignment: CrossAxisAlignment.center,
-                                                children: [
-                                                  Row(
-                                                    crossAxisAlignment: CrossAxisAlignment.center,
-                                                    children: [
-                                                      Image.network('${coin_img_url[10]}', width: 24, height: 24),
-                                                      SizedBox(
-                                                          width: 65,
-                                                          child: Text('${coin_name[10]}',
-                                                            style: GoogleFonts.lato(
-                                                                fontSize: 12.0,
-                                                                fontWeight: FontWeight.bold,
-                                                                color: Colors.white
-                                                            ),)
-                                                      ),
-                                                    ],
-                                                  ),
-                                                  SizedBox(
-                                                      width: 150,
-                                                      child: Text('${coin_cap[10]}',
-                                                        textAlign: TextAlign.end,
-                                                        style: GoogleFonts.lato(
-                                                            fontSize: 12.0,
-                                                            fontWeight: FontWeight.bold,
-                                                            color: Colors.white),
-                                                      )
-                                                  ),
-                                                  SizedBox(
-                                                    width: 120,
-                                                    child: Column(
-                                                      crossAxisAlignment: CrossAxisAlignment.end,
-                                                      children: [
-                                                        Text(
-                                                          coin_price[10],
-                                                          style: GoogleFonts.lato(
-                                                              fontSize: 12.0,
-                                                              fontWeight: FontWeight.bold,
-                                                              color: Colors.white),
-                                                        ),
-                                                        Text(
-                                                          coin_percent[10],
-                                                          style: GoogleFonts.lato(
-                                                              fontSize: 12.0,
-                                                              fontWeight: FontWeight.bold,
-                                                              color: Color(coin_sign[10])),
-                                                        ),
-                                                      ],
-                                                    ),
-                                                  ),
-                                                ],
-                                              ),
-                                              SizedBox(
-                                                height: 15.0,
-                                              ),
-                                              Row(
-                                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                                crossAxisAlignment: CrossAxisAlignment.center,
-                                                children: [
-                                                  Row(
-                                                    crossAxisAlignment: CrossAxisAlignment.center,
-                                                    children: [
-                                                      Image.network('${coin_img_url[11]}', width: 24, height: 24),
-                                                      SizedBox(
-                                                          width: 65,
-                                                          child: Text('${coin_name[11]}',
-                                                            style: GoogleFonts.lato(
-                                                                fontSize: 12.0,
-                                                                fontWeight: FontWeight.bold,
-                                                                color: Colors.white
-                                                            ),)
-                                                      ),
-                                                    ],
-                                                  ),
-                                                  SizedBox(
-                                                      width: 150,
-                                                      child: Text('${coin_cap[11]}',
-                                                        textAlign: TextAlign.end,
-                                                        style: GoogleFonts.lato(
-                                                            fontSize: 12.0,
-                                                            fontWeight: FontWeight.bold,
-                                                            color: Colors.white),
-                                                      )
-                                                  ),
-                                                  SizedBox(
-                                                    width: 120,
-                                                    child: Column(
-                                                      crossAxisAlignment: CrossAxisAlignment.end,
-                                                      children: [
-                                                        Text(
-                                                          coin_price[11],
-                                                          style: GoogleFonts.lato(
-                                                              fontSize: 12.0,
-                                                              fontWeight: FontWeight.bold,
-                                                              color: Colors.white),
-                                                        ),
-                                                        Text(
-                                                          coin_percent[11],
-                                                          style: GoogleFonts.lato(
-                                                              fontSize: 12.0,
-                                                              fontWeight: FontWeight.bold,
-                                                              color: Color(coin_sign[11])),
-                                                        ),
-                                                      ],
-                                                    ),
-                                                  ),
-                                                ],
-                                              ),
-                                              SizedBox(
-                                                height: 15.0,
-                                              ),
-                                              Row(
-                                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                                crossAxisAlignment: CrossAxisAlignment.center,
-                                                children: [
-                                                  Row(
-                                                    crossAxisAlignment: CrossAxisAlignment.center,
-                                                    children: [
-                                                      Image.network('${coin_img_url[12]}', width: 24, height: 24),
-                                                      SizedBox(
-                                                          width: 65,
-                                                          child: Text('${coin_name[12]}',
-                                                            style: GoogleFonts.lato(
-                                                                fontSize: 12.0,
-                                                                fontWeight: FontWeight.bold,
-                                                                color: Colors.white
-                                                            ),)
-                                                      ),
-                                                    ],
-                                                  ),
-                                                  SizedBox(
-                                                      width: 150,
-                                                      child: Text('${coin_cap[12]}',
-                                                        textAlign: TextAlign.end,
-                                                        style: GoogleFonts.lato(
-                                                            fontSize: 12.0,
-                                                            fontWeight: FontWeight.bold,
-                                                            color: Colors.white),
-                                                      )
-                                                  ),
-                                                  SizedBox(
-                                                    width: 120,
-                                                    child: Column(
-                                                      crossAxisAlignment: CrossAxisAlignment.end,
-                                                      children: [
-                                                        Text(
-                                                          coin_price[12],
-                                                          style: GoogleFonts.lato(
-                                                              fontSize: 12.0,
-                                                              fontWeight: FontWeight.bold,
-                                                              color: Colors.white),
-                                                        ),
-                                                        Text(
-                                                          coin_percent[12],
-                                                          style: GoogleFonts.lato(
-                                                              fontSize: 12.0,
-                                                              fontWeight: FontWeight.bold,
-                                                              color: Color(coin_sign[12])),
-                                                        ),
-                                                      ],
-                                                    ),
-                                                  ),
-                                                ],
-                                              ),
-                                              SizedBox(
-                                                height: 15.0,
-                                              ),
-                                              Row(
-                                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                                crossAxisAlignment: CrossAxisAlignment.center,
-                                                children: [
-                                                  Row(
-                                                    crossAxisAlignment: CrossAxisAlignment.center,
-                                                    children: [
-                                                      Image.network('${coin_img_url[13]}', width: 24, height: 24),
-                                                      SizedBox(
-                                                          width: 65,
-                                                          child: Text('${coin_name[13]}',
-                                                            style: GoogleFonts.lato(
-                                                                fontSize: 12.0,
-                                                                fontWeight: FontWeight.bold,
-                                                                color: Colors.white
-                                                            ),)
-                                                      ),
-                                                    ],
-                                                  ),
-                                                  SizedBox(
-                                                      width: 150,
-                                                      child: Text('${coin_cap[13]}',
-                                                        textAlign: TextAlign.end,
-                                                        style: GoogleFonts.lato(
-                                                            fontSize: 12.0,
-                                                            fontWeight: FontWeight.bold,
-                                                            color: Colors.white),
-                                                      )
-                                                  ),
-                                                  SizedBox(
-                                                    width: 120,
-                                                    child: Column(
-                                                      crossAxisAlignment: CrossAxisAlignment.end,
-                                                      children: [
-                                                        Text(
-                                                          coin_price[13],
-                                                          style: GoogleFonts.lato(
-                                                              fontSize: 12.0,
-                                                              fontWeight: FontWeight.bold,
-                                                              color: Colors.white),
-                                                        ),
-                                                        Text(
-                                                          coin_percent[13],
-                                                          style: GoogleFonts.lato(
-                                                              fontSize: 12.0,
-                                                              fontWeight: FontWeight.bold,
-                                                              color: Color(coin_sign[13])),
-                                                        ),
-                                                      ],
-                                                    ),
-                                                  ),
-                                                ],
-                                              ),
-                                              SizedBox(
-                                                height: 15.0,
-                                              ),
-                                              Row(
-                                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                                crossAxisAlignment: CrossAxisAlignment.center,
-                                                children: [
-                                                  Row(
-                                                    crossAxisAlignment: CrossAxisAlignment.center,
-                                                    children: [
-                                                      Image.network('${coin_img_url[14]}', width: 24, height: 24),
-                                                      SizedBox(
-                                                          width: 65,
-                                                          child: Text('${coin_name[14]}',
-                                                            style: GoogleFonts.lato(
-                                                                fontSize: 12.0,
-                                                                fontWeight: FontWeight.bold,
-                                                                color: Colors.white
-                                                            ),)
-                                                      ),
-                                                    ],
-                                                  ),
-                                                  SizedBox(
-                                                      width: 150,
-                                                      child: Text('${coin_cap[14]}',
-                                                        textAlign: TextAlign.end,
-                                                        style: GoogleFonts.lato(
-                                                            fontSize: 12.0,
-                                                            fontWeight: FontWeight.bold,
-                                                            color: Colors.white),
-                                                      )
-                                                  ),
-                                                  SizedBox(
-                                                    width: 120,
-                                                    child: Column(
-                                                      crossAxisAlignment: CrossAxisAlignment.end,
-                                                      children: [
-                                                        Text(
-                                                          coin_price[14],
-                                                          style: GoogleFonts.lato(
-                                                              fontSize: 12.0,
-                                                              fontWeight: FontWeight.bold,
-                                                              color: Colors.white),
-                                                        ),
-                                                        Text(
-                                                          coin_percent[14],
-                                                          style: GoogleFonts.lato(
-                                                              fontSize: 12.0,
-                                                              fontWeight: FontWeight.bold,
-                                                              color: Color(coin_sign[14])),
-                                                        ),
-                                                      ],
-                                                    ),
-                                                  ),
-                                                ],
-                                              ),
-                                              SizedBox(
-                                                height: 15.0,
-                                              ),
-                                            ],
+                                                  ],
+                                                ),
+                                              );
+                                            }, separatorBuilder: (BuildContext context, int index) =>
+                                              SizedBox(height: 10.0,),
                                           ),
                                         ],
                                       ),
@@ -1165,7 +380,33 @@ class _PriceScreenState extends State<PriceScreen> with TickerProviderStateMixin
                                   thickness: 1.0,
                                   color: Colors.white30,
                                 ),
+                                /*
+                                SizedBox(
+                                  width : 200,
+                                  child: ListView.builder(
+                                    itemCount: 3,
+                                    itemBuilder: (BuildContext cntext, int index) {
+                                      return ListTile(
+                                        title : Text('Entry ${coin_name[index]}', ),
+                                      );
+                                    }
+                                  )
+                                ),
 
+                                 */
+                                ListView.separated(
+                                    shrinkWrap: true,
+                                    padding: const EdgeInsets.all(8),
+                                    itemCount: 3,
+                                    itemBuilder: (BuildContext context, int index) {
+                                      return Container(
+                                        height: 50,
+                                        child: Center(child: Text(
+                                            'Entry ${coin_name[index]}')),
+                                      );
+                                    }, separatorBuilder: (BuildContext context, int index) =>
+                                    SizedBox(height: 15.0,),
+                                ),
 
                               ],
                             )
