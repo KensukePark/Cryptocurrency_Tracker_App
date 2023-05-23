@@ -8,8 +8,9 @@ Dart 2.16.0 <br>
 CoinGecko API <br>
 LocalStorage(shared_preferences) <br>
 
-<p align="left"><img src="coin_demo_01.png" width="450" height="800"/>
-<img src="coin_demo_02.png" width="450" height="800"/></p>
+<p align="left"><img src="coin_wallet_01.png" width="450" height="800"/>
+<img src="coin_wallet_02.png" width="450" height="800"/>
+<img src="coin_wallet_03.png" width="450" height="800"/></p>
 
 
 
