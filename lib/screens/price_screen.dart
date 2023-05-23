@@ -3,15 +3,17 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:percent_indicator/percent_indicator.dart';
-import '../screens/loading.dart';
-import '../screens/coin_edit_page.dart';
 import 'package:intl/intl.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'dart:io';
 import 'dart:async';
-
+import '../screens/loading.dart';
+import '../screens/coin_edit_page.dart';
 class PriceScreen extends StatefulWidget {
-  PriceScreen({this.parseData});
+  PriceScreen({this.parseData, this.keyData, this.valueData});
   final parseData;
+  final keyData;
+  final valueData;
   @override
   State<PriceScreen> createState() => _PriceScreenState();
 }
@@ -26,27 +28,39 @@ class _PriceScreenState extends State<PriceScreen> with TickerProviderStateMixin
   late List<int> coin_sign = []; //코인이 양전인지 음전인지 체크용 리스트
   late List<String> coin_img_url = []; //코인 이미지 url을 저장할 리스트
   late List<double> coin_price_for_cal = []; //코인 가격 계산용 리스트
-  late List<String> hold_coin_sym = ['BTC', 'ETH', 'XRP', 'DOGE']; //보유한 코인들의 티커명을 저장할 리스트
-  late List<double> hold_coin_amount = [1, 6, 13500, 22500]; //보유한 코인들의 양을 저장할 리스트
-  late List<int> hold_coin_price = [33500000, 2550000, 580, 93]; //보유한 코인들의 매수가를 저장할 리스트
+  //late List<String> hold_coin_sym = ['BTC', 'ETH', 'XRP', 'DOGE'];
+  late List<String> hold_coin_sym = []; //보유한 코인들의 티커명을 저장할 리스트
+  //late List<double> hold_coin_amount = [1, 6, 13500, 22500]; //보유한 코인들의 양을 저장할 리스트
+  late List<double> hold_coin_amount = []; //보유한 코인들의 양을 저장할 리스트
+  //late List<int> hold_coin_price = [33500000, 2550000, 580, 93];
+  late List<int> hold_coin_price = []; //보유한 코인들의 매수가를 저장할 리스트
+  late List<String> hold_coin_price_print = []; //보유한 코인들의 매수가를 프린트하기 위한 리스트
   late List<int> hold_coin_idx = []; //보유한 코인들의 coin_sym 리스트에서의 인덱스값을 저장할 리스트
   late List<String> hold_coin_value = []; //보유한 코인들의 평가금액을 저장할 리스트
   late List<String> hold_coin_percent = []; //보유한 코인들의 수익률을 저장할 리스트
   late List<int> hold_coin_sign = []; //보유한 코인이 양전인지 음전인지 체크용 리스트
-  late Timer _timer; //타이머
+  //late Timer _timer; //타이머
   late bool Refresh_timer = true; //체크용 bool
   late int total_value = 0; //총 평가금액
   late int total_price = 0; //총 매수금액
   late String total_value_print = '';
   late String profit_loss_print = '';
   late int profit_loss_sign = 0;
-  late String profit_loss_per;
+  late String profit_loss_per = '';
+  late List<String> key_temp = [];
+  late List<String> value_temp = [];
+  late bool pref_check = false;
+  /*
   void _time() {
-    Timer.periodic(Duration(seconds: 30), (timer) {
-      Refresh_timer = true;
-    }
+    Timer.periodic(
+        Duration(
+            seconds: 30
+        ), (timer) {
+          Refresh_timer = true;
+        }
     );
   }
+   */
   void _Refresh() {
     Navigator.of(context).pushReplacement(
         MaterialPageRoute(
@@ -54,31 +68,23 @@ class _PriceScreenState extends State<PriceScreen> with TickerProviderStateMixin
         )
     );
   }
-  @override
-  void initState() {
-    super.initState();
-    updateData(widget.parseData);
-    _time(); //갱신 활성화를 위해 타이머 시작
 
-    //자동 가격 갱신 기능 미사용
-    //잦은 갱신 시 차단되어 비정상 작동
-    /*
-    _timer = Timer.periodic(Duration(seconds: 600), (timer) {
-      Navigator.of(context).pushReplacement(
-        MaterialPageRoute(
-          builder: (BuildContext context) => Loading(),
-        )
-      );
-      //Navigator.push(context, MaterialPageRoute(builder: (_) => Loading()));
-    });
-    */
-    _tabController = TabController(
-      length: 2,
-      vsync: this,  //vsync에 this 형태로 전달해야 애니메이션이 정상 처리됨
-    );
+  //localStorage 로딩
+  void PrefLoad()  {
+    key_temp = widget.keyData;
+    value_temp = widget.valueData;
+    if (key_temp.length > 0) {
+      for (int i = 0; i < key_temp.length; i++) {
+        hold_coin_sym.add(key_temp[i]);
+        hold_coin_amount.add(double.parse(value_temp[i*2]));
+        hold_coin_price.add(int.parse(value_temp[i*2+1]));
+      }
+    }
   }
 
+  //거래소 코인 정보 업데이트
   void updateData(dynamic Data){
+    print('update function active');
     NumberFormat format = NumberFormat('#,###');
     NumberFormat format2 = NumberFormat('#,###.##');
     for (int i = 0; i<100; i++) {
@@ -97,17 +103,29 @@ class _PriceScreenState extends State<PriceScreen> with TickerProviderStateMixin
         coin_sign.add(4278212095); //음전인 경우
       }
     }
-    for (int i = 0; i<hold_coin_sym.length; i++) {
-      for (int j = 0; j<100; j++) {
+  }
+
+  //보유 코인 정보 업데이트
+  void holdUpdate() async{
+    NumberFormat format = NumberFormat('#,###');
+    print('hold update active');
+    for (int i = 0; i < hold_coin_sym.length; i++) {
+      for (int j = 0; j < 100; j++) {
         if (hold_coin_sym[i] == coin_sym[j]) {
           hold_coin_idx.add(j);
           break; //break로 시간 절약
         }
       }
-      hold_coin_value.add(format.format(double.parse((hold_coin_amount[i] * coin_price_for_cal[hold_coin_idx[i]]).toString())));
-      total_value+=(hold_coin_amount[i] * coin_price_for_cal[hold_coin_idx[i]]).toInt();
-      total_price+=(hold_coin_amount[i] * hold_coin_price[i]).toInt();
-      hold_coin_percent.add((((coin_price_for_cal[hold_coin_idx[i]]-hold_coin_price[i]) / hold_coin_price[i])*100).toStringAsFixed(2) + ' %');
+      hold_coin_value.add(format.format(double.parse(
+          (hold_coin_amount[i] * coin_price_for_cal[hold_coin_idx[i]])
+              .toString())));
+      total_value +=
+          (hold_coin_amount[i] * coin_price_for_cal[hold_coin_idx[i]]).toInt();
+      total_price += (hold_coin_amount[i] * hold_coin_price[i]).toInt();
+      hold_coin_percent.add(
+          (((coin_price_for_cal[hold_coin_idx[i]] - hold_coin_price[i]) /
+              hold_coin_price[i]) * 100).toStringAsFixed(2) + ' %');
+      hold_coin_price_print.add(format.format(hold_coin_price[i]));
       if (coin_price_for_cal[hold_coin_idx[i]] >= hold_coin_price[i]) {
         hold_coin_sign.add(4294901760);
       }
@@ -117,18 +135,47 @@ class _PriceScreenState extends State<PriceScreen> with TickerProviderStateMixin
       }
     }
     total_value_print = format.format(int.parse(total_value.toString())) + ' ₩';
-    profit_loss_print = format.format(int.parse((total_value-total_price).toString())) + ' ₩';
-    if (total_value-total_price >= 0) {
-        profit_loss_sign = 4294901760;
+    profit_loss_print =
+        format.format(int.parse((total_value - total_price).toString())) + ' ₩';
+    if (total_value - total_price >= 0) {
+      profit_loss_sign = 4294901760;
     }
     else {
       profit_loss_sign = 4278212095;
     }
-    profit_loss_per = (((total_value-total_price) / total_price)*100).toStringAsFixed(2);
+    profit_loss_per =
+        (((total_value - total_price) / total_price) * 100).toStringAsFixed(2);
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    updateData(widget.parseData);
+    PrefLoad();
+    holdUpdate();
+    //holdUpdate();
+    //_time();
+    //갱신 활성화를 위해 타이머 시작
+    //자동 가격 갱신 기능 미사용
+    //잦은 갱신 시 차단되어 비정상 작동
+    /*
+    _timer = Timer.periodic(Duration(seconds: 600), (timer) {
+      Navigator.of(context).pushReplacement(
+        MaterialPageRoute(
+          builder: (BuildContext context) => Loading(),
+        )
+      );
+      //Navigator.push(context, MaterialPageRoute(builder: (_) => Loading()));
+    });
+    */
+    _tabController = TabController(
+      length: 2,
+      vsync: this,  //vsync에 this 형태로 전달해야 애니메이션이 정상 처리됨
+    );
   }
   @override
   void dispose() {
-    _timer.cancel();
+    //_timer.cancel();
     super.dispose();
   }
   Widget build(BuildContext context) {
@@ -143,10 +190,12 @@ class _PriceScreenState extends State<PriceScreen> with TickerProviderStateMixin
           automaticallyImplyLeading: false,
           backgroundColor: Color(0xff322f38),
           title: Text('Coin Wallet Demo',),
+          /*
           actions: [
             IconButton(onPressed: Refresh_timer ? () => _Refresh() : null
               , icon: Icon(Icons.refresh),),
           ],
+           */
         ),
         bottomNavigationBar: TabBar(
           tabs: [
@@ -476,7 +525,7 @@ class _PriceScreenState extends State<PriceScreen> with TickerProviderStateMixin
                                   children: [
 
                                     SizedBox(
-                                      width: 65,
+                                      width: 64,
                                       child: Text('티커명', style: GoogleFonts.lato(
                                           fontSize: 15.0,
                                           color: Colors.grey
@@ -484,9 +533,9 @@ class _PriceScreenState extends State<PriceScreen> with TickerProviderStateMixin
                                       ),
                                     ),
                                     SizedBox(
-                                      width: 65,
+                                      width: 85,
                                       child: Text('보유량',
-                                        textAlign: TextAlign.end,
+                                        textAlign: TextAlign.center,
                                         style: GoogleFonts.lato(
                                           fontSize: 15.0,
                                           color: Colors.grey
@@ -494,7 +543,17 @@ class _PriceScreenState extends State<PriceScreen> with TickerProviderStateMixin
                                       ),
                                     ),
                                     SizedBox(
-                                      width: 90,
+                                      width: 105,
+                                      child: Text('매수평균가',
+                                        textAlign: TextAlign.center,
+                                        style: GoogleFonts.lato(
+                                            fontSize: 15.0,
+                                            color: Colors.grey
+                                        ),
+                                      ),
+                                    ),
+                                    SizedBox(
+                                      width: 95,
                                       child: Text('평가금/수익률',
                                         textAlign: TextAlign.end,
                                         style: GoogleFonts.lato(
@@ -524,7 +583,7 @@ class _PriceScreenState extends State<PriceScreen> with TickerProviderStateMixin
                                           children: [
                                             Image.network('${coin_img_url[hold_coin_idx[index]]}', width: 24, height: 24),
                                             SizedBox(
-                                              width: 65,
+                                              width: 40,
                                               child: Text('${hold_coin_sym[index]}', style: GoogleFonts.lato(
                                                 fontSize: 12.0,
                                                 fontWeight: FontWeight.bold,
@@ -535,7 +594,7 @@ class _PriceScreenState extends State<PriceScreen> with TickerProviderStateMixin
                                           ],
                                         ),
                                         SizedBox(
-                                          width: 65,
+                                          width: 85,
                                           child: Text('${hold_coin_amount[index]}',
                                             textAlign: TextAlign.center,
                                             style: GoogleFonts.lato(
@@ -544,8 +603,19 @@ class _PriceScreenState extends State<PriceScreen> with TickerProviderStateMixin
                                                 color: Colors.white),
                                           ),
                                         ),
+
                                         SizedBox(
-                                          width: 90,
+                                          width: 105,
+                                          child: Text('${hold_coin_price_print[index]}',
+                                            textAlign: TextAlign.center,
+                                            style: GoogleFonts.lato(
+                                                fontSize: 12.0,
+                                                fontWeight: FontWeight.bold,
+                                                color: Colors.white),
+                                          ),
+                                        ),
+                                        SizedBox(
+                                          width: 95,
                                           child: Column(
                                             crossAxisAlignment: CrossAxisAlignment.end,
                                             children: [
@@ -578,10 +648,9 @@ class _PriceScreenState extends State<PriceScreen> with TickerProviderStateMixin
                                 Align(
                                   alignment: Alignment.bottomRight,
                                   child: FloatingActionButton.small(
-                                    onPressed: (){
-                                      Navigator.push(context, MaterialPageRoute(builder: (context){
-                                        return CoinEditPage();
-                                      }));
+                                    onPressed: () async {
+                                      Navigator.push(context, MaterialPageRoute(
+                                          builder: (context) => CoinEditPage(coin_sym/*hold_coin_sym, hold_coin_amount, hold_coin_price*/)));
                                     },
                                     child: Icon(Icons.add_chart_sharp),
                                     backgroundColor: Colors.white,
@@ -590,7 +659,6 @@ class _PriceScreenState extends State<PriceScreen> with TickerProviderStateMixin
                               ],
                             )
                         ),
-
                       ],
                     ),
                   ),
