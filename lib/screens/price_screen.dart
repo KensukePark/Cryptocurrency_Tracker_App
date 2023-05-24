@@ -61,6 +61,7 @@ class _PriceScreenState extends State<PriceScreen> with TickerProviderStateMixin
     );
   }
    */
+  //새로고침
   void _Refresh() {
     Navigator.of(context).pushReplacement(
         MaterialPageRoute(
@@ -80,6 +81,9 @@ class _PriceScreenState extends State<PriceScreen> with TickerProviderStateMixin
         hold_coin_price.add(int.parse(value_temp[i*2+1]));
       }
     }
+    print(hold_coin_sym);
+    print(hold_coin_amount);
+    print(hold_coin_price);
   }
 
   //거래소 코인 정보 업데이트
@@ -645,19 +649,19 @@ class _PriceScreenState extends State<PriceScreen> with TickerProviderStateMixin
                                     SizedBox(height: 10.0,),
                                 ),
                                 SizedBox(height: 10.0,),
-                                Align(
-                                  alignment: Alignment.bottomRight,
-                                  child: FloatingActionButton.small(
-                                    onPressed: () async {
-                                      Navigator.push(context, MaterialPageRoute(
-                                          builder: (context) => CoinEditPage(coin_sym/*hold_coin_sym, hold_coin_amount, hold_coin_price*/)));
-                                    },
-                                    child: Icon(Icons.add_chart_sharp),
-                                    backgroundColor: Colors.white,
-                                  ),
-                                ),
                               ],
                             )
+                        ),
+                        Align(
+                          alignment: Alignment(0.9, 0.95),
+                          child: FloatingActionButton.small(
+                            onPressed: () async {
+                              Navigator.push(context, MaterialPageRoute(
+                                  builder: (context) => CoinEditPage(coin_sym/*hold_coin_sym, hold_coin_amount, hold_coin_price*/)));
+                            },
+                            child: Icon(Icons.add_chart_sharp),
+                            backgroundColor: Colors.white,
+                          ),
                         ),
                       ],
                     ),

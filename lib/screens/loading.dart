@@ -25,6 +25,7 @@ class _LoadingState extends State<Loading> {
     Network network = Network('https://api.coingecko.com/api/v3/coins/markets?vs_currency=krw&order=market_cap_desc&per_page=100&page=1&sparkline=false&price_change_percentage=24h');
     var Data = await network.getData();
     final prefs = await SharedPreferences.getInstance();
+    //prefs.clear(); //초기화시 사용
     key_temp = prefs.getKeys().toList();
     key_temp.sort();
     if (key_temp.length > 0) {
