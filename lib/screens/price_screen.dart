@@ -2,13 +2,11 @@ import 'package:coin_wallet_demo/screens/coin_edit_page.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:percent_indicator/percent_indicator.dart';
 import 'package:intl/intl.dart';
-import 'package:shared_preferences/shared_preferences.dart';
-import 'dart:io';
-import 'dart:async';
+import 'package:pie_chart/pie_chart.dart';
 import '../screens/loading.dart';
 import '../screens/coin_edit_page.dart';
+
 class PriceScreen extends StatefulWidget {
   PriceScreen({this.parseData, this.keyData, this.valueData});
   final parseData;
@@ -39,6 +37,7 @@ class _PriceScreenState extends State<PriceScreen> with TickerProviderStateMixin
   late List<String> hold_coin_value = []; //보유한 코인들의 평가금액을 저장할 리스트
   late List<String> hold_coin_percent = []; //보유한 코인들의 수익률을 저장할 리스트
   late List<int> hold_coin_sign = []; //보유한 코인이 양전인지 음전인지 체크용 리스트
+  late List<int> hold_coin_price_bar = [];
   //late Timer _timer; //타이머
   late bool Refresh_timer = true; //체크용 bool
   late int total_value = 0; //총 평가금액
@@ -50,17 +49,25 @@ class _PriceScreenState extends State<PriceScreen> with TickerProviderStateMixin
   late List<String> key_temp = [];
   late List<String> value_temp = [];
   late bool pref_check = false;
-  /*
-  void _time() {
-    Timer.periodic(
-        Duration(
-            seconds: 30
-        ), (timer) {
-          Refresh_timer = true;
-        }
-    );
-  }
-   */
+  late Map<String, double> dataMap = {};
+  late Map<String, double> dataMap2 = {};
+  late List<Color> chart_color = [Colors.blue.shade200,
+    Colors.greenAccent,
+    Colors.orangeAccent,
+    Colors.indigoAccent,
+    Colors.redAccent,
+    Colors.cyanAccent,
+    Colors.amberAccent,
+    Colors.deepOrangeAccent,
+    Colors.deepPurpleAccent,
+    Colors.lightGreenAccent,
+    Colors.lightBlueAccent,
+    Colors.limeAccent,
+    Colors.pinkAccent,
+    Colors.purpleAccent,
+    Colors.tealAccent,
+    Colors.yellowAccent,
+  ];
   //새로고침
   void _Refresh() {
     Navigator.of(context).pushReplacement(
@@ -120,6 +127,7 @@ class _PriceScreenState extends State<PriceScreen> with TickerProviderStateMixin
           break; //break로 시간 절약
         }
       }
+      dataMap[hold_coin_sym[i]] = hold_coin_price[i] * hold_coin_amount[i];
       hold_coin_value.add(format.format(double.parse(
           (hold_coin_amount[i] * coin_price_for_cal[hold_coin_idx[i]])
               .toString())));
@@ -177,12 +185,17 @@ class _PriceScreenState extends State<PriceScreen> with TickerProviderStateMixin
       vsync: this,  //vsync에 this 형태로 전달해야 애니메이션이 정상 처리됨
     );
   }
+
   @override
   void dispose() {
-    //_timer.cancel();
     super.dispose();
   }
   Widget build(BuildContext context) {
+    double maxWidth = MediaQuery.of(context).size.width - 36;
+    var totalUnitNum = 0;
+    for (int i = 0; i < hold_coin_price_bar.length; i++) {
+      totalUnitNum += hold_coin_price_bar[i];
+    }
     return DefaultTabController(
       initialIndex: 1,
       length: 2,
@@ -443,227 +456,303 @@ class _PriceScreenState extends State<PriceScreen> with TickerProviderStateMixin
                   ),
                   Container(
                     color: Color(0xff322f38),
-                    child: Stack(
-                      children: [
-                        Container(
-                            padding: EdgeInsets.all(15),
-                            child:
-                            Column(
-                              children: [
-                                SizedBox(
-                                  height: 1.0,
-                                ),
-                                Row(
-                                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                  children: [
-                                    SizedBox(
-                                        width: 160,
-                                        child: Text('총평가금액',
-                                          style: GoogleFonts.lato(
-                                              fontSize: 12.0,
-                                              fontWeight: FontWeight.bold,
-                                              color: Colors.grey
-                                          ),)
-                                    ),
-                                    SizedBox(
-                                        width: 120,
-                                        child: Text('평가손익',
-                                          textAlign: TextAlign.center,
-                                          style: GoogleFonts.lato(
-                                              fontSize: 12.0,
-                                              fontWeight: FontWeight.bold,
-                                              color: Colors.grey
-                                          ),)
-                                    ),
-                                    SizedBox(
-                                        width: 80,
-                                        child: Text('수익률',
-                                          textAlign: TextAlign.end,
-                                          style: GoogleFonts.lato(
-                                              fontSize: 12.0,
-                                              fontWeight: FontWeight.bold,
-                                              color: Colors.grey
-                                          ),)
-                                    ),
-                                  ],
-                                ),
-                                Row(
-                                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                  children: [
-                                    SizedBox(
-                                        width: 160,
-                                        child: Text(total_value_print,
-                                          style: GoogleFonts.lato(
-                                              fontSize: 24.0,
-                                              fontWeight: FontWeight.bold,
-                                              color: Colors.white
-                                          ),)
-                                    ),
-                                    SizedBox(
-                                        width: 120,
-                                        child: Text(profit_loss_print,
-                                          textAlign: TextAlign.center,
-                                          style: GoogleFonts.lato(
-                                              fontSize: 18.0,
-                                              fontWeight: FontWeight.bold,
-                                              color: Color(profit_loss_sign),
-                                          ),)
-                                    ),
-                                    SizedBox(
-                                        width: 80,
-                                        child: Text(profit_loss_per + '%',
-                                          textAlign: TextAlign.end,
-                                          style: GoogleFonts.lato(
-                                              fontSize: 18.0,
-                                              fontWeight: FontWeight.bold,
-                                              color: Color(profit_loss_sign),
-                                          ),)
-                                    ),
-                                  ],
-                                ),
-                                SizedBox(
-                                  height: 15.0,
-                                ),
-                                Row(
-                                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                  children: [
+                    child: SingleChildScrollView(
+                      child: Stack(
+                        children: [
+                          Container(
+                              padding: EdgeInsets.all(15),
+                              child:
+                              Column(
+                                children: [
+                                  SizedBox(
+                                    height: 1.0,
+                                  ),
+                                  Row(
+                                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                    children: [
+                                      SizedBox(
+                                          width: 160,
+                                          child: Text('총평가금액',
+                                            style: GoogleFonts.lato(
+                                                fontSize: 12.0,
+                                                fontWeight: FontWeight.bold,
+                                                color: Colors.grey
+                                            ),)
+                                      ),
+                                      SizedBox(
+                                          width: 120,
+                                          child: Text('평가손익',
+                                            textAlign: TextAlign.center,
+                                            style: GoogleFonts.lato(
+                                                fontSize: 12.0,
+                                                fontWeight: FontWeight.bold,
+                                                color: Colors.grey
+                                            ),)
+                                      ),
+                                      SizedBox(
+                                          width: 80,
+                                          child: Text('수익률',
+                                            textAlign: TextAlign.end,
+                                            style: GoogleFonts.lato(
+                                                fontSize: 12.0,
+                                                fontWeight: FontWeight.bold,
+                                                color: Colors.grey
+                                            ),)
+                                      ),
+                                    ],
+                                  ),
+                                  Row(
+                                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                    children: [
+                                      SizedBox(
+                                          width: 160,
+                                          child: Text(total_value_print,
+                                            style: GoogleFonts.lato(
+                                                fontSize: 24.0,
+                                                fontWeight: FontWeight.bold,
+                                                color: Colors.white
+                                            ),)
+                                      ),
+                                      SizedBox(
+                                          width: 120,
+                                          child: Text(profit_loss_print,
+                                            textAlign: TextAlign.center,
+                                            style: GoogleFonts.lato(
+                                                fontSize: 18.0,
+                                                fontWeight: FontWeight.bold,
+                                                color: Color(profit_loss_sign),
+                                            ),)
+                                      ),
+                                      SizedBox(
+                                          width: 80,
+                                          child: Text(profit_loss_per + '%',
+                                            textAlign: TextAlign.end,
+                                            style: GoogleFonts.lato(
+                                                fontSize: 18.0,
+                                                fontWeight: FontWeight.bold,
+                                                color: Color(profit_loss_sign),
+                                            ),)
+                                      ),
+                                    ],
+                                  ),
+                                  SizedBox(
+                                    height: 15.0,
+                                  ),
+                                  Row(
+                                    children: [
+                                      SizedBox(
+                                        width: 64,
+                                      ),
+                                      PieChart(
+                                        dataMap: dataMap,
+                                        chartRadius: MediaQuery.of(context).size.width / 3,
+                                        chartLegendSpacing: 80,
+                                        colorList: chart_color,
+                                        centerText: "보유 비중",
+                                        chartType: ChartType.ring,
+                                        ringStrokeWidth: 66,
+                                        centerTextStyle: TextStyle(
+                                          color: Colors.white,
+                                        ),
+                                        chartValuesOptions: ChartValuesOptions(
+                                          chartValueStyle: TextStyle(
+                                            color: Colors.black54,
+                                          ),
+                                          showChartValuesInPercentage: true,
+                                          showChartValueBackground: false,
+                                          showChartValuesOutside: true,
+                                        ),
+                                      ),
 
-                                    SizedBox(
-                                      width: 64,
-                                      child: Text('티커명', style: GoogleFonts.lato(
-                                          fontSize: 15.0,
-                                          color: Colors.grey
-                                      ),
-                                      ),
+                                    ],
+                                  ),
+
+                                  SizedBox(
+                                    height: 15.0,
+                                  ),
+                                  /* //막대바로 보유량 표현
+                                  ClipRRect(
+                                    borderRadius: BorderRadius.circular(90),
+                                    child: Row(
+                                      children: [
+                                        for (int i = 0; i < hold_coin_price_bar.length; i++)
+                                          i == hold_coin_price_bar.length - 1
+                                              ? Expanded(
+                                            child: SizedBox(
+                                              height: 16,
+                                              child: ColoredBox(
+                                                color: chart_color[i],
+                                              ),
+                                            ),
+                                          )
+                                              : Row(
+                                            children: [
+                                              SizedBox(
+                                                width:
+                                                hold_coin_price_bar[i] / totalUnitNum * maxWidth,
+                                                height: 16,
+                                                child: ColoredBox(
+                                                  color: chart_color[i],
+                                                ),
+                                              ),
+                                            ],
+                                          )
+                                      ],
                                     ),
-                                    SizedBox(
-                                      width: 85,
-                                      child: Text('보유량',
-                                        textAlign: TextAlign.center,
-                                        style: GoogleFonts.lato(
-                                          fontSize: 15.0,
-                                          color: Colors.grey
-                                      ),
-                                      ),
-                                    ),
-                                    SizedBox(
-                                      width: 105,
-                                      child: Text('매수평균가',
-                                        textAlign: TextAlign.center,
-                                        style: GoogleFonts.lato(
+                                  ),
+                                   */
+                                  SizedBox(
+                                    height: 15.0,
+                                  ),
+                                  Row(
+                                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                    children: [
+
+                                      SizedBox(
+                                        width: 64,
+                                        child: Text('티커명', style: GoogleFonts.lato(
                                             fontSize: 15.0,
                                             color: Colors.grey
                                         ),
-                                      ),
-                                    ),
-                                    SizedBox(
-                                      width: 95,
-                                      child: Text('평가금/수익률',
-                                        textAlign: TextAlign.end,
-                                        style: GoogleFonts.lato(
-                                          fontSize: 15.0,
-                                          color: Colors.grey
-                                      ),
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                                Divider(
-                                  height: 25.0,
-                                  thickness: 1.0,
-                                  color: Colors.white30,
-                                ),
-                                ListView.separated(
-                                  shrinkWrap: true,
-                                  itemCount: hold_coin_sym.length,
-                                  itemBuilder: (BuildContext context, int index) {
-                                    return Container(
-                                      child: Row(
-                                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                      crossAxisAlignment: CrossAxisAlignment.center,
-                                      children: [
-                                        Row(
-                                          crossAxisAlignment: CrossAxisAlignment.center,
-                                          children: [
-                                            Image.network('${coin_img_url[hold_coin_idx[index]]}', width: 24, height: 24),
-                                            SizedBox(
-                                              width: 40,
-                                              child: Text('${hold_coin_sym[index]}', style: GoogleFonts.lato(
-                                                fontSize: 12.0,
-                                                fontWeight: FontWeight.bold,
-                                                color: Colors.white,
-                                              ),
-                                              ),
-                                            ),
-                                          ],
                                         ),
-                                        SizedBox(
-                                          width: 85,
-                                          child: Text('${hold_coin_amount[index]}',
-                                            textAlign: TextAlign.center,
-                                            style: GoogleFonts.lato(
-                                                fontSize: 12.0,
-                                                fontWeight: FontWeight.bold,
-                                                color: Colors.white),
+                                      ),
+                                      SizedBox(
+                                        width: 85,
+                                        child: Text('보유량',
+                                          textAlign: TextAlign.center,
+                                          style: GoogleFonts.lato(
+                                            fontSize: 15.0,
+                                            color: Colors.grey
+                                        ),
+                                        ),
+                                      ),
+                                      SizedBox(
+                                        width: 105,
+                                        child: Text('매수평균가',
+                                          textAlign: TextAlign.center,
+                                          style: GoogleFonts.lato(
+                                              fontSize: 15.0,
+                                              color: Colors.grey
                                           ),
                                         ),
-
-                                        SizedBox(
-                                          width: 105,
-                                          child: Text('${hold_coin_price_print[index]}',
-                                            textAlign: TextAlign.center,
-                                            style: GoogleFonts.lato(
-                                                fontSize: 12.0,
-                                                fontWeight: FontWeight.bold,
-                                                color: Colors.white),
-                                          ),
+                                      ),
+                                      SizedBox(
+                                        width: 95,
+                                        child: Text('평가금/수익률',
+                                          textAlign: TextAlign.end,
+                                          style: GoogleFonts.lato(
+                                            fontSize: 15.0,
+                                            color: Colors.grey
                                         ),
-                                        SizedBox(
-                                          width: 95,
-                                          child: Column(
-                                            crossAxisAlignment: CrossAxisAlignment.end,
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                  Divider(
+                                    height: 25.0,
+                                    thickness: 1.0,
+                                    color: Colors.white30,
+                                  ),
+                                  ListView.separated(
+                                    physics: const NeverScrollableScrollPhysics(),
+                                    shrinkWrap: true,
+                                    itemCount: hold_coin_sym.length,
+                                    itemBuilder: (BuildContext context, int index) {
+                                      return Container(
+                                        child: Row(
+                                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                        crossAxisAlignment: CrossAxisAlignment.center,
+                                        children: [
+                                          Row(
+                                            crossAxisAlignment: CrossAxisAlignment.center,
                                             children: [
-                                              Text(
-                                                '${hold_coin_value[index]}',
-                                                style: GoogleFonts.lato(
-                                                    fontSize: 12.0,
-                                                    fontWeight: FontWeight.bold,
-                                                    color: Colors.white),
-                                              ),
-                                              Text(
-                                                '${hold_coin_percent[index]}',
-                                                style: GoogleFonts.lato(
-                                                    fontSize: 12.0,
-                                                    fontWeight: FontWeight.bold,
-                                                    color: Color(hold_coin_sign[index])),
+                                              Image.network('${coin_img_url[hold_coin_idx[index]]}', width: 24, height: 24),
+                                              SizedBox(
+                                                width: 40,
+                                                child: Text('${hold_coin_sym[index]}', style: GoogleFonts.lato(
+                                                  fontSize: 12.0,
+                                                  fontWeight: FontWeight.bold,
+                                                  color: Colors.white,
+                                                ),
+                                                ),
                                               ),
                                             ],
                                           ),
+                                          SizedBox(
+                                            width: 85,
+                                            child: Text('${hold_coin_amount[index]}',
+                                              textAlign: TextAlign.center,
+                                              style: GoogleFonts.lato(
+                                                  fontSize: 12.0,
+                                                  fontWeight: FontWeight.bold,
+                                                  color: Colors.white),
+                                            ),
+                                          ),
 
-                                        ),
+                                          SizedBox(
+                                            width: 105,
+                                            child: Text('${hold_coin_price_print[index]}',
+                                              textAlign: TextAlign.center,
+                                              style: GoogleFonts.lato(
+                                                  fontSize: 12.0,
+                                                  fontWeight: FontWeight.bold,
+                                                  color: Colors.white),
+                                            ),
+                                          ),
+                                          SizedBox(
+                                            width: 95,
+                                            child: Column(
+                                              crossAxisAlignment: CrossAxisAlignment.end,
+                                              children: [
+                                                Text(
+                                                  '${hold_coin_value[index]}',
+                                                  style: GoogleFonts.lato(
+                                                      fontSize: 12.0,
+                                                      fontWeight: FontWeight.bold,
+                                                      color: Colors.white),
+                                                ),
+                                                Text(
+                                                  '${hold_coin_percent[index]}',
+                                                  style: GoogleFonts.lato(
+                                                      fontSize: 12.0,
+                                                      fontWeight: FontWeight.bold,
+                                                      color: Color(hold_coin_sign[index])),
+                                                ),
+                                              ],
+                                            ),
 
-                                      ],
-                                    ),
-                                    );
-                                  }, separatorBuilder: (BuildContext context, int index) =>
-                                    SizedBox(height: 10.0,),
-                                ),
-                                SizedBox(height: 10.0,),
-                              ],
-                            )
-                        ),
-                        Align(
-                          alignment: Alignment(0.9, 0.95),
-                          child: FloatingActionButton.small(
-                            onPressed: () async {
-                              Navigator.push(context, MaterialPageRoute(
-                                  builder: (context) => CoinEditPage(coin_sym/*hold_coin_sym, hold_coin_amount, hold_coin_price*/)));
-                            },
-                            child: Icon(Icons.add_chart_sharp),
-                            backgroundColor: Colors.white,
+                                          ),
+
+                                        ],
+                                      ),
+                                      );
+                                    }, separatorBuilder: (BuildContext context, int index) =>
+                                      SizedBox(height: 10.0,),
+                                  ),
+                                  SizedBox(height: 15.0,),
+                                  Column(
+                                    children: [
+                                      Row(
+                                        mainAxisAlignment: MainAxisAlignment.end,
+                                        children: [
+                                          FloatingActionButton.small(
+                                            onPressed: () async {
+                                              Navigator.push(context, MaterialPageRoute(
+                                                  builder: (context) => CoinEditPage(coin_sym/*hold_coin_sym, hold_coin_amount, hold_coin_price*/)));
+                                            },
+                                            child: Icon(Icons.add_chart_sharp),
+                                            backgroundColor: Colors.white,
+                                          ),
+                                        ],
+                                      )
+                                    ],
+                                  ),
+                                ],
+                              )
                           ),
-                        ),
-                      ],
+
+                        ],
+                      ),
                     ),
                   ),
                 ],

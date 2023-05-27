@@ -40,6 +40,7 @@ dependencies:
   google_fonts: ^1.1.2
   flutter_svg: ^0.19.3
   percent_indicator: ^2.1.9
+  pie_chart: ^5.3.2
   restart_app:
   intl:
   shared_preferences:
