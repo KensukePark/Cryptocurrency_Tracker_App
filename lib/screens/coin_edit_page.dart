@@ -79,7 +79,6 @@ class _CoinEditPageState extends State<CoinEditPage> {
                     },
                     borderRadius: const BorderRadius.all(Radius.circular(8)),
                     selectedBorderColor: _isSelected[0] == true ? Colors.red[700] : Colors.blue[700],
-                    selectedColor: Colors.white,
                     fillColor: _isSelected[0] == true ? Colors.red[200] : Colors.blue[200],
                     color: _isSelected[0] == true ? Colors.blue[400] : Colors.red[400],
                     isSelected: _isSelected,
@@ -212,7 +211,7 @@ class _CoinEditPageState extends State<CoinEditPage> {
                     controller: _priceController,
                     decoration: const InputDecoration(
                       border : OutlineInputBorder(),
-                      labelText: '매수가격',
+                      labelText: '거래가격',
                       enabledBorder: OutlineInputBorder(
                         borderRadius: BorderRadius.all(Radius.circular(10)),
                         borderSide: BorderSide(color: Colors.white,),

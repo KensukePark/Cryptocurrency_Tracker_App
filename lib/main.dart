@@ -14,7 +14,20 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       title: 'Coin Wallet Demo',
-      theme: ThemeData.dark(),
+      theme: ThemeData(
+          fontFamily: 'spoqaFont',
+          primaryColor: Colors.blueGrey,
+          primarySwatch: Colors.blueGrey,
+          textTheme: TextTheme(
+            headline1: TextStyle(color: Colors.white),
+            headline2: TextStyle(color: Colors.white),
+            bodyText2: TextStyle(color: Colors.white),
+          ),
+          inputDecorationTheme: InputDecorationTheme(
+            labelStyle: TextStyle(color: Colors.white,
+            fontSize: 14,)
+          )
+      ),
       home: Loading(),
     );
   }

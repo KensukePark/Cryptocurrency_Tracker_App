@@ -38,6 +38,11 @@ class _PriceScreenState extends State<PriceScreen> with TickerProviderStateMixin
   late List<String> hold_coin_percent = []; //보유한 코인들의 수익률을 저장할 리스트
   late List<int> hold_coin_sign = []; //보유한 코인이 양전인지 음전인지 체크용 리스트
   late List<int> hold_coin_price_bar = [];
+  late List<int> hold_coin_profit = []; //보유한 코인의 평가손익을 저장할 리스트
+  late List<String> hold_coin_profit_print = []; //보유한 코인의 평가손익을 저장할 리스트
+  late List<double> hold_coin_full_price = []; //보유한 코인의 매수금액을 저장할 리스트
+  late List<String> hold_coin_full_price_print = []; //보유한 코인의 매수금액을 출력용으로 사용할 리스트
+
   //late Timer _timer; //타이머
   late bool Refresh_timer = true; //체크용 bool
   late int total_value = 0; //총 평가금액
@@ -99,8 +104,8 @@ class _PriceScreenState extends State<PriceScreen> with TickerProviderStateMixin
     NumberFormat format = NumberFormat('#,###');
     NumberFormat format2 = NumberFormat('#,###.##');
     for (int i = 0; i<100; i++) {
-      //coin_name.add(' ' + Data[i]['id']);
-      coin_name.add(' '+Data[i]['symbol'].toUpperCase());
+      coin_name.add(Data[i]['id'].toUpperCase());
+      //coin_name.add(' '+Data[i]['symbol'].toUpperCase());
       coin_sym.add(Data[i]['symbol'].toUpperCase());
       coin_img_url.add(Data[i]['image']);
       coin_price.add(format2.format(double.parse(Data[i]['current_price'].toString())) + ' ₩');
@@ -127,10 +132,16 @@ class _PriceScreenState extends State<PriceScreen> with TickerProviderStateMixin
           break; //break로 시간 절약
         }
       }
-      dataMap[hold_coin_sym[i]] = hold_coin_price[i] * hold_coin_amount[i];
+      hold_coin_full_price.add(hold_coin_price[i] * hold_coin_amount[i]);
+      hold_coin_full_price_print.add(format.format(hold_coin_full_price[i]));
+      dataMap[hold_coin_sym[i]] = hold_coin_full_price[i];
       hold_coin_value.add(format.format(double.parse(
           (hold_coin_amount[i] * coin_price_for_cal[hold_coin_idx[i]])
               .toString())));
+      hold_coin_profit.add(
+          ((coin_price_for_cal[hold_coin_idx[i]].toDouble() * hold_coin_amount[i]) -
+              (hold_coin_price[i].toDouble() * hold_coin_amount[i])).toInt());
+      hold_coin_profit_print.add(format.format(hold_coin_profit[i]));
       total_value +=
           (hold_coin_amount[i] * coin_price_for_cal[hold_coin_idx[i]]).toInt();
       total_price += (hold_coin_amount[i] * hold_coin_price[i]).toInt();
@@ -206,7 +217,7 @@ class _PriceScreenState extends State<PriceScreen> with TickerProviderStateMixin
         appBar: AppBar(
           automaticallyImplyLeading: false,
           backgroundColor: Color(0xff322f38),
-          title: Text('Coin Wallet Demo',),
+          title: Text('Crypto Wallet Demo',),
           /*
           actions: [
             IconButton(onPressed: Refresh_timer ? () => _Refresh() : null
@@ -268,7 +279,7 @@ class _PriceScreenState extends State<PriceScreen> with TickerProviderStateMixin
                                               SizedBox(
                                                   width: 160,
                                                   child: Text('총평가금액',
-                                                    style: GoogleFonts.lato(
+                                                    style: TextStyle(
                                                         fontSize: 12.0,
                                                         fontWeight: FontWeight.bold,
                                                         color: Colors.grey
@@ -278,7 +289,7 @@ class _PriceScreenState extends State<PriceScreen> with TickerProviderStateMixin
                                                   width: 120,
                                                   child: Text('평가손익',
                                                     textAlign: TextAlign.center,
-                                                    style: GoogleFonts.lato(
+                                                    style: TextStyle(
                                                         fontSize: 12.0,
                                                         fontWeight: FontWeight.bold,
                                                         color: Colors.grey
@@ -288,7 +299,7 @@ class _PriceScreenState extends State<PriceScreen> with TickerProviderStateMixin
                                                   width: 80,
                                                   child: Text('수익률',
                                                     textAlign: TextAlign.end,
-                                                    style: GoogleFonts.lato(
+                                                    style: TextStyle(
                                                         fontSize: 12.0,
                                                         fontWeight: FontWeight.bold,
                                                         color: Colors.grey
@@ -313,9 +324,9 @@ class _PriceScreenState extends State<PriceScreen> with TickerProviderStateMixin
                                                   child: Text(profit_loss_print,
                                                     textAlign: TextAlign.center,
                                                     style: GoogleFonts.lato(
-                                                        fontSize: 18.0,
-                                                        fontWeight: FontWeight.bold,
-                                                        color: Color(profit_loss_sign),
+                                                      fontSize: 18.0,
+                                                      fontWeight: FontWeight.bold,
+                                                      color: Color(profit_loss_sign),
                                                     ),)
                                               ),
                                               SizedBox(
@@ -323,9 +334,9 @@ class _PriceScreenState extends State<PriceScreen> with TickerProviderStateMixin
                                                   child: Text(profit_loss_per + '%',
                                                     textAlign: TextAlign.end,
                                                     style: GoogleFonts.lato(
-                                                        fontSize: 18.0,
-                                                        fontWeight: FontWeight.bold,
-                                                        color: Color(profit_loss_sign),
+                                                      fontSize: 18.0,
+                                                      fontWeight: FontWeight.bold,
+                                                      color: Color(profit_loss_sign),
                                                     ),)
                                               ),
                                             ],
@@ -341,7 +352,7 @@ class _PriceScreenState extends State<PriceScreen> with TickerProviderStateMixin
                                                 children: [
                                                   Text(
                                                     '티커명　　　　　　',
-                                                    style: GoogleFonts.lato(
+                                                    style: TextStyle(
                                                         fontSize: 15.0,
                                                         color: Colors.grey
                                                     ),
@@ -354,7 +365,7 @@ class _PriceScreenState extends State<PriceScreen> with TickerProviderStateMixin
                                                 children: [
                                                   Text(
                                                     '    시가총액',
-                                                    style: GoogleFonts.lato(
+                                                    style: TextStyle(
                                                         fontSize: 15.0,
                                                         color: Colors.grey
                                                     ),
@@ -366,7 +377,7 @@ class _PriceScreenState extends State<PriceScreen> with TickerProviderStateMixin
                                                 children: [
                                                   Text(
                                                     '현재가/등락률',
-                                                    style: GoogleFonts.lato(
+                                                    style: TextStyle(
                                                         fontSize: 15.0,
                                                         color: Colors.grey
                                                     ),
@@ -396,7 +407,7 @@ class _PriceScreenState extends State<PriceScreen> with TickerProviderStateMixin
                                                         Image.network('${coin_img_url[index]}', width: 24, height: 24),
                                                         SizedBox(
                                                           width: 65,
-                                                          child: Text('${coin_name[index]}', style: GoogleFonts.lato(
+                                                          child: Text('${coin_sym[index]}', style: TextStyle(
                                                             fontSize: 12.0,
                                                             fontWeight: FontWeight.bold,
                                                             color: Colors.white,
@@ -409,7 +420,7 @@ class _PriceScreenState extends State<PriceScreen> with TickerProviderStateMixin
                                                       width: 150,
                                                       child: Text('${coin_cap[index]}',
                                                         textAlign: TextAlign.end,
-                                                        style: GoogleFonts.lato(
+                                                        style: TextStyle(
                                                             fontSize: 12.0,
                                                             fontWeight: FontWeight.bold,
                                                             color: Colors.white),
@@ -422,14 +433,14 @@ class _PriceScreenState extends State<PriceScreen> with TickerProviderStateMixin
                                                         children: [
                                                           Text(
                                                             coin_price[index],
-                                                            style: GoogleFonts.lato(
+                                                            style: TextStyle(
                                                                 fontSize: 12.0,
                                                                 fontWeight: FontWeight.bold,
                                                                 color: Colors.white),
                                                           ),
                                                           Text(
                                                             coin_percent[index],
-                                                            style: GoogleFonts.lato(
+                                                            style: TextStyle(
                                                                 fontSize: 12.0,
                                                                 fontWeight: FontWeight.bold,
                                                                 color: Color(coin_sign[index])),
@@ -457,15 +468,36 @@ class _PriceScreenState extends State<PriceScreen> with TickerProviderStateMixin
                   Container(
                     color: Color(0xff322f38),
                     child: SingleChildScrollView(
-                      child: Stack(
+                      child: Column(
                         children: [
                           Container(
                               padding: EdgeInsets.all(15),
-                              child:
-                              Column(
+                              child: Column(
                                 children: [
                                   SizedBox(
                                     height: 1.0,
+                                  ),
+                                  Row(
+                                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                      children: [
+                                        Text('내 자산',
+                                          textAlign: TextAlign.start,
+                                          style: TextStyle(
+                                            color: Colors.white,
+                                            fontWeight: FontWeight.bold,
+                                          ),
+                                        ),
+                                        Text('KRW 환산 추정값',
+                                          textAlign: TextAlign.end,
+                                          style: TextStyle(
+                                            color: Colors.grey,
+                                            fontWeight: FontWeight.bold,
+                                          ),
+                                        ),
+                                      ]
+                                  ),
+                                  SizedBox(
+                                    height: 15.0,
                                   ),
                                   Row(
                                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -473,7 +505,7 @@ class _PriceScreenState extends State<PriceScreen> with TickerProviderStateMixin
                                       SizedBox(
                                           width: 160,
                                           child: Text('총평가금액',
-                                            style: GoogleFonts.lato(
+                                            style: TextStyle(
                                                 fontSize: 12.0,
                                                 fontWeight: FontWeight.bold,
                                                 color: Colors.grey
@@ -483,7 +515,7 @@ class _PriceScreenState extends State<PriceScreen> with TickerProviderStateMixin
                                           width: 120,
                                           child: Text('평가손익',
                                             textAlign: TextAlign.center,
-                                            style: GoogleFonts.lato(
+                                            style: TextStyle(
                                                 fontSize: 12.0,
                                                 fontWeight: FontWeight.bold,
                                                 color: Colors.grey
@@ -493,7 +525,7 @@ class _PriceScreenState extends State<PriceScreen> with TickerProviderStateMixin
                                           width: 80,
                                           child: Text('수익률',
                                             textAlign: TextAlign.end,
-                                            style: GoogleFonts.lato(
+                                            style: TextStyle(
                                                 fontSize: 12.0,
                                                 fontWeight: FontWeight.bold,
                                                 color: Colors.grey
@@ -518,9 +550,9 @@ class _PriceScreenState extends State<PriceScreen> with TickerProviderStateMixin
                                           child: Text(profit_loss_print,
                                             textAlign: TextAlign.center,
                                             style: GoogleFonts.lato(
-                                                fontSize: 18.0,
-                                                fontWeight: FontWeight.bold,
-                                                color: Color(profit_loss_sign),
+                                              fontSize: 18.0,
+                                              fontWeight: FontWeight.bold,
+                                              color: Color(profit_loss_sign),
                                             ),)
                                       ),
                                       SizedBox(
@@ -528,227 +560,350 @@ class _PriceScreenState extends State<PriceScreen> with TickerProviderStateMixin
                                           child: Text(profit_loss_per + '%',
                                             textAlign: TextAlign.end,
                                             style: GoogleFonts.lato(
-                                                fontSize: 18.0,
-                                                fontWeight: FontWeight.bold,
-                                                color: Color(profit_loss_sign),
+                                              fontSize: 18.0,
+                                              fontWeight: FontWeight.bold,
+                                              color: Color(profit_loss_sign),
                                             ),)
                                       ),
                                     ],
                                   ),
-                                  SizedBox(
-                                    height: 15.0,
-                                  ),
-                                  Row(
+                                ],
+                              )
+                          ),
+                          Divider(
+                            color: Colors.white,
+                            thickness: 0.3,
+                          ),
+                          Container(
+                            padding: EdgeInsets.all(15),
+                            child: Column(
+                              children: [
+                                Row(
                                     children: [
-                                      SizedBox(
-                                        width: 64,
-                                      ),
-                                      PieChart(
-                                        dataMap: dataMap,
-                                        chartRadius: MediaQuery.of(context).size.width / 3,
-                                        chartLegendSpacing: 80,
-                                        colorList: chart_color,
-                                        centerText: "보유 비중",
-                                        chartType: ChartType.ring,
-                                        ringStrokeWidth: 66,
-                                        centerTextStyle: TextStyle(
+                                      Text('보유자산 포트폴리오',
+                                        textAlign: TextAlign.start,
+                                        style: TextStyle(
                                           color: Colors.white,
+                                          fontWeight: FontWeight.bold,
                                         ),
-                                        chartValuesOptions: ChartValuesOptions(
-                                          chartValueStyle: TextStyle(
-                                            color: Colors.black54,
-                                          ),
-                                          showChartValuesInPercentage: true,
-                                          showChartValueBackground: false,
-                                          showChartValuesOutside: true,
-                                        ),
-                                      ),
-
-                                    ],
-                                  ),
-
-                                  SizedBox(
-                                    height: 15.0,
-                                  ),
-                                  /* //막대바로 보유량 표현
-                                  ClipRRect(
-                                    borderRadius: BorderRadius.circular(90),
-                                    child: Row(
-                                      children: [
-                                        for (int i = 0; i < hold_coin_price_bar.length; i++)
-                                          i == hold_coin_price_bar.length - 1
-                                              ? Expanded(
-                                            child: SizedBox(
-                                              height: 16,
-                                              child: ColoredBox(
-                                                color: chart_color[i],
-                                              ),
-                                            ),
-                                          )
-                                              : Row(
-                                            children: [
-                                              SizedBox(
-                                                width:
-                                                hold_coin_price_bar[i] / totalUnitNum * maxWidth,
-                                                height: 16,
-                                                child: ColoredBox(
-                                                  color: chart_color[i],
-                                                ),
-                                              ),
-                                            ],
-                                          )
-                                      ],
+                                      )
+                                    ]
+                                ),
+                                SizedBox(
+                                  height: 35,
+                                ),
+                                Row(
+                                  children: [
+                                    SizedBox(
+                                      width: 64,
                                     ),
-                                  ),
-                                   */
-                                  SizedBox(
-                                    height: 15.0,
-                                  ),
-                                  Row(
-                                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                    children: [
+                                    PieChart(
+                                      dataMap: dataMap,
+                                      chartRadius: MediaQuery.of(context).size.width / 3,
+                                      chartLegendSpacing: 80,
+                                      colorList: chart_color,
+                                      centerText: "보유 비중",
+                                      chartType: ChartType.ring,
+                                      ringStrokeWidth: 66,
+                                      centerTextStyle: TextStyle(
+                                        color: Colors.white,
+                                      ),
+                                      chartValuesOptions: ChartValuesOptions(
+                                        chartValueStyle: TextStyle(
+                                          color: Colors.black54,
+                                        ),
+                                        showChartValuesInPercentage: true,
+                                        showChartValueBackground: false,
+                                        showChartValuesOutside: true,
+                                      ),
+                                    ),
+                                  ],
+                                )
+                              ],
+                            ),
 
-                                      SizedBox(
-                                        width: 64,
-                                        child: Text('티커명', style: GoogleFonts.lato(
-                                            fontSize: 15.0,
-                                            color: Colors.grey
-                                        ),
-                                        ),
-                                      ),
-                                      SizedBox(
-                                        width: 85,
-                                        child: Text('보유량',
-                                          textAlign: TextAlign.center,
-                                          style: GoogleFonts.lato(
-                                            fontSize: 15.0,
-                                            color: Colors.grey
-                                        ),
-                                        ),
-                                      ),
-                                      SizedBox(
-                                        width: 105,
-                                        child: Text('매수평균가',
-                                          textAlign: TextAlign.center,
-                                          style: GoogleFonts.lato(
-                                              fontSize: 15.0,
-                                              color: Colors.grey
-                                          ),
-                                        ),
-                                      ),
-                                      SizedBox(
-                                        width: 95,
-                                        child: Text('평가금/수익률',
-                                          textAlign: TextAlign.end,
-                                          style: GoogleFonts.lato(
-                                            fontSize: 15.0,
-                                            color: Colors.grey
-                                        ),
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                  Divider(
-                                    height: 25.0,
-                                    thickness: 1.0,
-                                    color: Colors.white30,
-                                  ),
-                                  ListView.separated(
-                                    physics: const NeverScrollableScrollPhysics(),
-                                    shrinkWrap: true,
-                                    itemCount: hold_coin_sym.length,
-                                    itemBuilder: (BuildContext context, int index) {
-                                      return Container(
-                                        child: Row(
-                                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                        crossAxisAlignment: CrossAxisAlignment.center,
+                          ),
+                          SizedBox(
+                            height: 35,
+                          ),
+                          Divider(
+                            color: Colors.white,
+                            thickness: 0.3,
+                          ),
+                          Container(
+                            padding: EdgeInsets.all(15),
+                            child: Column(
+                              children: [
+                                ListView.separated(
+                                  physics: const NeverScrollableScrollPhysics(),
+                                  shrinkWrap: true,
+                                  itemCount: hold_coin_sym.length,
+                                  itemBuilder: (BuildContext context, int index) {
+                                    return Container(
+                                      child: Column(
                                         children: [
                                           Row(
+                                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                             crossAxisAlignment: CrossAxisAlignment.center,
                                             children: [
-                                              Image.network('${coin_img_url[hold_coin_idx[index]]}', width: 24, height: 24),
-                                              SizedBox(
-                                                width: 40,
-                                                child: Text('${hold_coin_sym[index]}', style: GoogleFonts.lato(
-                                                  fontSize: 12.0,
-                                                  fontWeight: FontWeight.bold,
-                                                  color: Colors.white,
-                                                ),
-                                                ),
-                                              ),
-                                            ],
-                                          ),
-                                          SizedBox(
-                                            width: 85,
-                                            child: Text('${hold_coin_amount[index]}',
-                                              textAlign: TextAlign.center,
-                                              style: GoogleFonts.lato(
-                                                  fontSize: 12.0,
-                                                  fontWeight: FontWeight.bold,
-                                                  color: Colors.white),
-                                            ),
-                                          ),
+                                              Row(
+                                                crossAxisAlignment: CrossAxisAlignment.center,
+                                                children: [
+                                                  SizedBox(
+                                                    width: (MediaQuery.of(context).size.width - 30)/2,
+                                                    child: Column(
+                                                      crossAxisAlignment: CrossAxisAlignment.start,
+                                                      children: [
+                                                        Text(
+                                                          '${coin_name[hold_coin_idx[index]]}',
+                                                          style: TextStyle(
+                                                            fontSize: 12.0,
+                                                            fontWeight: FontWeight.bold,
+                                                            color: Colors.white,
+                                                          ),
+                                                        ),
+                                                        Text(
+                                                          '(${hold_coin_sym[index]})',
+                                                          style: TextStyle(
+                                                            fontSize: 12.0,
+                                                            fontWeight: FontWeight.bold,
+                                                            color: Colors.white,
+                                                          ),
+                                                        ),
 
-                                          SizedBox(
-                                            width: 105,
-                                            child: Text('${hold_coin_price_print[index]}',
-                                              textAlign: TextAlign.center,
-                                              style: GoogleFonts.lato(
-                                                  fontSize: 12.0,
-                                                  fontWeight: FontWeight.bold,
-                                                  color: Colors.white),
-                                            ),
-                                          ),
-                                          SizedBox(
-                                            width: 95,
-                                            child: Column(
-                                              crossAxisAlignment: CrossAxisAlignment.end,
-                                              children: [
-                                                Text(
-                                                  '${hold_coin_value[index]}',
+                                                      ],
+                                                    )
+                                                  ),
+                                                ],
+                                              ),
+                                              /*
+                                              SizedBox(
+                                                width: 85,
+                                                child: Text('${hold_coin_amount[index]}  ${hold_coin_sym[index]}',
+                                                  textAlign: TextAlign.center,
                                                   style: GoogleFonts.lato(
                                                       fontSize: 12.0,
                                                       fontWeight: FontWeight.bold,
                                                       color: Colors.white),
                                                 ),
-                                                Text(
-                                                  '${hold_coin_percent[index]}',
+                                              ),
+                                              */
+                                              /*
+                                              SizedBox(
+                                                width: 105,
+                                                child: Text('${hold_coin_price_print[index]}',
+                                                  textAlign: TextAlign.center,
                                                   style: GoogleFonts.lato(
                                                       fontSize: 12.0,
                                                       fontWeight: FontWeight.bold,
-                                                      color: Color(hold_coin_sign[index])),
+                                                      color: Colors.white),
                                                 ),
-                                              ],
-                                            ),
+                                              ),
+                                              */
+                                              SizedBox(
+                                                width: (MediaQuery.of(context).size.width - 30)/4,
+                                                child: Column(
+                                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                                  children: [
+                                                    Text(
+                                                      '평가손익',
+                                                      style: TextStyle(
+                                                          fontSize: 12.0,
+                                                          fontWeight: FontWeight.bold,
+                                                          color: Colors.white,
+                                                      ),
+                                                    ),
+                                                    Text(
+                                                      '수익률',
+                                                      style: TextStyle(
+                                                          fontSize: 12.0,
+                                                          fontWeight: FontWeight.bold,
+                                                          color: Colors.white,
+                                                      ),
+                                                    ),
+                                                  ],
+                                                ),
+                                              ),
+                                              SizedBox(
+                                                width: (MediaQuery.of(context).size.width - 30)/4,
+                                                child: Column(
+                                                  crossAxisAlignment: CrossAxisAlignment.end,
+                                                  children: [
+                                                    Text(
+                                                      '${hold_coin_profit_print[index]}',
+                                                      style: TextStyle(
+                                                          fontSize: 12.0,
+                                                          fontWeight: FontWeight.bold,
+                                                          color: Color(hold_coin_sign[index])),
+                                                    ),
+                                                    Text(
+                                                      '${hold_coin_percent[index]}',
+                                                      style: TextStyle(
+                                                          fontSize: 12.0,
+                                                          fontWeight: FontWeight.bold,
+                                                          color: Color(hold_coin_sign[index])),
+                                                    ),
+                                                  ],
+                                                ),
 
+                                              ),
+                                            ],
                                           ),
-
+                                          SizedBox(
+                                            height: 10.0,
+                                          ),
+                                          Row(
+                                            children: [
+                                              SizedBox(
+                                                width: (MediaQuery.of(context).size.width - 30)*3/7,
+                                                child: Column(
+                                                  crossAxisAlignment: CrossAxisAlignment.end,
+                                                  children: [
+                                                    Text(
+                                                      '${hold_coin_amount[index]} ${hold_coin_sym[index]}',
+                                                      style: TextStyle(
+                                                        fontSize: 12.0,
+                                                        fontWeight: FontWeight.bold,
+                                                        color: Colors.white,
+                                                      ),
+                                                    ),
+                                                    Text(
+                                                      '보유수량',
+                                                      style: TextStyle(
+                                                        fontSize: 12.0,
+                                                        fontWeight: FontWeight.bold,
+                                                        color: Colors.grey,
+                                                      ),
+                                                    ),
+                                                  ],
+                                                ),
+                                              ),
+                                              SizedBox(
+                                                width: (MediaQuery.of(context).size.width - 30)/7,
+                                              ),
+                                              SizedBox(
+                                                width: (MediaQuery.of(context).size.width - 30)*3/7,
+                                                child: Column(
+                                                  crossAxisAlignment: CrossAxisAlignment.end,
+                                                  children: [
+                                                    Text(
+                                                      '${hold_coin_price_print[index]} KRW',
+                                                      style: TextStyle(
+                                                        fontSize: 12.0,
+                                                        fontWeight: FontWeight.bold,
+                                                        color: Colors.white,
+                                                      ),
+                                                    ),
+                                                    Text(
+                                                      '매수평균가',
+                                                      style: TextStyle(
+                                                        fontSize: 12.0,
+                                                        fontWeight: FontWeight.bold,
+                                                        color: Colors.grey,
+                                                      ),
+                                                    ),
+                                                  ],
+                                                ),
+                                              ),
+                                            ],
+                                          ),
+                                          SizedBox(
+                                            height: 10.0,
+                                          ),
+                                          Row(
+                                            children: [
+                                              SizedBox(
+                                                width: (MediaQuery.of(context).size.width - 30)*3/7,
+                                                child: Column(
+                                                  crossAxisAlignment: CrossAxisAlignment.end,
+                                                  children: [
+                                                    Text(
+                                                      '${hold_coin_value[index]} KRW',
+                                                      style: TextStyle(
+                                                        fontSize: 12.0,
+                                                        fontWeight: FontWeight.bold,
+                                                        color: Colors.white,
+                                                      ),
+                                                    ),
+                                                    Text(
+                                                      '평가금액',
+                                                      style: TextStyle(
+                                                        fontSize: 12.0,
+                                                        fontWeight: FontWeight.bold,
+                                                        color: Colors.grey,
+                                                      ),
+                                                    ),
+                                                  ],
+                                                ),
+                                              ),
+                                              SizedBox(
+                                                width: (MediaQuery.of(context).size.width - 30)/7,
+                                              ),
+                                              SizedBox(
+                                                width: (MediaQuery.of(context).size.width - 30)*3/7,
+                                                child: Column(
+                                                  crossAxisAlignment: CrossAxisAlignment.end,
+                                                  children: [
+                                                    Text(
+                                                      '${hold_coin_full_price_print[index]} KRW',
+                                                      style: TextStyle(
+                                                        fontSize: 12.0,
+                                                        fontWeight: FontWeight.bold,
+                                                        color: Colors.white,
+                                                      ),
+                                                    ),
+                                                    Text(
+                                                      '매수금액',
+                                                      style: TextStyle(
+                                                        fontSize: 12.0,
+                                                        fontWeight: FontWeight.bold,
+                                                        color: Colors.grey,
+                                                      ),
+                                                    ),
+                                                  ],
+                                                ),
+                                              ),
+                                            ],
+                                          ),
+                                          SizedBox(
+                                            height: 5.0,
+                                          ),
                                         ],
                                       ),
-                                      );
-                                    }, separatorBuilder: (BuildContext context, int index) =>
-                                      SizedBox(height: 10.0,),
-                                  ),
-                                  SizedBox(height: 15.0,),
-                                  Column(
-                                    children: [
-                                      Row(
-                                        mainAxisAlignment: MainAxisAlignment.end,
-                                        children: [
-                                          FloatingActionButton.small(
-                                            onPressed: () async {
-                                              Navigator.push(context, MaterialPageRoute(
-                                                  builder: (context) => CoinEditPage(coin_sym/*hold_coin_sym, hold_coin_amount, hold_coin_price*/)));
-                                            },
-                                            child: Icon(Icons.add_chart_sharp),
-                                            backgroundColor: Colors.white,
-                                          ),
-                                        ],
-                                      )
-                                    ],
-                                  ),
-                                ],
-                              )
+
+                                    );
+                                  }, separatorBuilder: (BuildContext context, int index) =>
+                                    Divider(
+                                      color: Colors.white,
+                                      thickness: 0.3,
+                                    ),
+                                ),
+                              ],
+                            ),
+                          ),
+                          Divider(
+                            color: Colors.white,
+                            thickness: 0.3,
+                          ),
+                          Container(
+                            padding: EdgeInsets.all(15),
+                            child: Column(
+                              children: [
+                                Row(
+                                  mainAxisAlignment: MainAxisAlignment.end,
+                                  children: [
+                                    FloatingActionButton.small(
+                                      onPressed: () async {
+                                        Navigator.push(context, MaterialPageRoute(
+                                            builder: (context) => CoinEditPage(coin_sym/*hold_coin_sym, hold_coin_amount, hold_coin_price*/)));
+                                      },
+                                      child: Icon(Icons.add_chart_sharp),
+                                      backgroundColor: Colors.grey,
+                                    ),
+                                  ],
+                                )
+                              ],
+                            ),
                           ),
 
                         ],
