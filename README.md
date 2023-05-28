@@ -7,10 +7,10 @@ Flutter 2.10.0 <br>
 Dart 2.16.0 <br>
 
 # Preview
-<p align="left"><img src="coin_wallet_app_01.png" width="225" height="400"/>
-<img src="coin_wallet_app_02.png" width="225" height="400"/>
-<img src="coin_wallet_app_03.png" width="225" height="400"/>
-<img src="coin_wallet_app_04.png" width="225" height="400"/></p>
+<p align="left"><img src="crypto_wallet_01.png" width="225" height="400"/>
+<img src="crypto_wallet_02.png" width="225" height="400"/>
+<img src="crypto_wallet_03.png" width="225" height="400"/>
+<img src="crypto_wallet_04.png" width="225" height="400"/></p>
 
 
 
